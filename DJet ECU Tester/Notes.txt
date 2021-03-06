@@ -1,0 +1,21 @@
+1. Ideal trigger points are closed for 135 degrees of *distributor* rotation. Worn points can be as high as 170 degrees. Therefore we can simulate worn points by keeping the pulses low for longer. Make this configurable.
+
+2. A complete firing sequence is 720 degrees of crankshaft rotation. Therefore for 1000 RPM a complete firing sequence happens at 500 RPM = 8.333 Hz.
+
+3. Input parameters:
+
+ - Engine speed in RPM
+ - Trigger points close time in degrees (default is 135)
+ - throttle position in %
+ - coolant temp in F
+ - air temp in F
+ - vacuum in in Hg (initally not used)
+
+4. Control testing via COM port, allow commands to be sent that set parameters. Implement a command line program to send the commands. E.g:
+
+  djetecu --engspeed 1000 --throttle 56 --coolanttemp 180 --airtemp 82 --triggerpointsclosedangle 140
+
+can be expanded later on to dynamically change values, e.g.:
+
+  djetecu --startengspeed 1000 --stopengspeed 2000 --incengspeed 100
+
