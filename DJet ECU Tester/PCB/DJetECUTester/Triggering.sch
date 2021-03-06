@@ -317,6 +317,4 @@ Text Notes 3100 4450 0    50   ~ 0
 Group III - E22-PG cyl 6/3 rising edge TDC
 Text Notes 6000 4450 0    50   ~ 0
 Group IV - E14-PG cyl 7/2 rising edge 180 ATDC
-Text Notes 3000 6100 0    50   ~ 0
-Trigger should go low for 110 degrees of rotation
 $EndSCHEMATC
