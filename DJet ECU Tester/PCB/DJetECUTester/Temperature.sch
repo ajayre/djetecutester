@@ -129,7 +129,7 @@ U 1 1 60460C5F
 P 6350 2450
 F 0 "TP1" H 6408 2568 50  0000 L CNN
 F 1 "TestPoint" H 6408 2477 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D4.0mm" H 6550 2450 50  0001 C CNN
+F 2 "TestPoint:TestPoint_Pad_D2.0mm" H 6550 2450 50  0001 C CNN
 F 3 "~" H 6550 2450 50  0001 C CNN
 	1    6350 2450
 	1    0    0    -1  
@@ -142,7 +142,7 @@ U 1 1 60461898
 P 6350 2650
 F 0 "TP2" H 6292 2676 50  0000 R CNN
 F 1 "TestPoint" H 6292 2767 50  0000 R CNN
-F 2 "TestPoint:TestPoint_Pad_D4.0mm" H 6550 2650 50  0001 C CNN
+F 2 "TestPoint:TestPoint_Pad_D2.0mm" H 6550 2650 50  0001 C CNN
 F 3 "~" H 6550 2650 50  0001 C CNN
 	1    6350 2650
 	-1   0    0    1   
@@ -281,7 +281,7 @@ U 1 1 604745BC
 P 6350 4750
 F 0 "TP3" H 6408 4868 50  0000 L CNN
 F 1 "TestPoint" H 6408 4777 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D4.0mm" H 6550 4750 50  0001 C CNN
+F 2 "TestPoint:TestPoint_Pad_D2.0mm" H 6550 4750 50  0001 C CNN
 F 3 "~" H 6550 4750 50  0001 C CNN
 	1    6350 4750
 	1    0    0    -1  
@@ -294,7 +294,7 @@ U 1 1 604745C3
 P 6350 4950
 F 0 "TP4" H 6292 4976 50  0000 R CNN
 F 1 "TestPoint" H 6292 5067 50  0000 R CNN
-F 2 "TestPoint:TestPoint_Pad_D4.0mm" H 6550 4950 50  0001 C CNN
+F 2 "TestPoint:TestPoint_Pad_D2.0mm" H 6550 4950 50  0001 C CNN
 F 3 "~" H 6550 4950 50  0001 C CNN
 	1    6350 4950
 	-1   0    0    1   
