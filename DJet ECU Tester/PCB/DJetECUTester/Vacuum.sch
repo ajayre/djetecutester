@@ -3,9 +3,9 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 6 6
+Sheet 6 7
 Title "D-Jetronic ECU Tester"
-Date "2021-03-04"
+Date "2021-03-08"
 Rev "1.0"
 Comp "(C) Britishideas 2021"
 Comment1 ""
@@ -391,8 +391,9 @@ U 1 1 604B20C1
 P 7850 3400
 F 0 "J7" H 7930 3442 50  0000 L CNN
 F 1 "VAC" H 7930 3351 50  0000 L CNN
-F 2 "" H 7850 3400 50  0001 C CNN
+F 2 "TerminalBlock_TE-Connectivity:TerminalBlock_TE_282834-5_1x05_P2.54mm_Horizontal" H 7850 3400 50  0001 C CNN
 F 3 "~" H 7850 3400 50  0001 C CNN
+F 4 "282834-5" H 7850 3400 50  0001 C CNN "manf#"
 	1    7850 3400
 	1    0    0    -1  
 $EndComp

@@ -3,9 +3,9 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 2 6
+Sheet 2 7
 Title "D-Jetronic ECU Tester"
-Date "2021-03-04"
+Date "2021-03-08"
 Rev "1.0"
 Comp "(C) Britishideas 2021"
 Comment1 ""
@@ -120,7 +120,7 @@ AR Path="/60487071" Ref="L?"  Part="1"
 AR Path="/60479334/60487071" Ref="L1"  Part="1" 
 F 0 "L1" V 4900 5850 50  0000 C CNN
 F 1 "33uH" V 5049 5850 50  0000 C CNN
-F 2 "Britishideas:Chilisin_Power_Inductor_AWVS_808040" H 4950 5850 50  0001 C CNN
+F 2 "Britishideas:Wurth-WE-LQS-Inductor" H 4950 5850 50  0001 C CNN
 F 3 "~" H 4950 5850 50  0001 C CNN
 	1    4950 5850
 	0    -1   -1   0   
@@ -162,7 +162,7 @@ AR Path="/604917B5" Ref="D?"  Part="1"
 AR Path="/60479334/604917B5" Ref="D4"  Part="1" 
 F 0 "D4" H 9000 3817 50  0000 C CNN
 F 1 "MBR0520LT1G" H 9000 3726 50  0000 C CNN
-F 2 "Britishideas:SMP_DO-220AA" H 9000 3600 50  0001 C CNN
+F 2 "Britishideas:SOD-123" H 9000 3600 50  0001 C CNN
 F 3 "~" H 9000 3600 50  0001 C CNN
 	1    9000 3600
 	1    0    0    -1  
@@ -501,8 +501,9 @@ U 1 1 6044A9A1
 P 2900 2550
 F 0 "FB1" H 3200 2500 50  0000 R CNN
 F 1 "MI0805K400R-10" H 3750 2600 50  0000 R CNN
-F 2 "" V 2830 2550 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 2830 2550 50  0001 C CNN
 F 3 "~" H 2900 2550 50  0001 C CNN
+F 4 "MI0805K400R-10" H 2900 2550 50  0001 C CNN "manf#"
 	1    2900 2550
 	-1   0    0    1   
 $EndComp
