@@ -126,25 +126,10 @@ F 3 "" H 2800 850 50  0001 C CNN
 	1    2800 850 
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:Crystal Y1
-U 1 1 5FE96DA0
-P 2050 1450
-F 0 "Y1" V 2096 1581 50  0000 L CNN
-F 1 "ECS-160-18-5PX-TR 16MHz" V 2350 950 50  0000 L CNN
-F 2 "Britishideas:HC-49_US" H 2050 1450 50  0001 C CNN
-F 3 "~" H 2050 1450 50  0001 C CNN
-	1    2050 1450
-	0    1    -1   0   
-$EndComp
-Wire Wire Line
-	2900 1600 2050 1600
 Wire Wire Line
 	2900 1500 2450 1500
 Wire Wire Line
 	2450 1500 2450 1300
-Wire Wire Line
-	2450 1300 2050 1300
 $Comp
 L Device:C C4
 U 1 1 5FE98587
@@ -167,12 +152,6 @@ F 3 "~" H 1750 1600 50  0001 C CNN
 	1    1750 1600
 	0    -1   1    0   
 $EndComp
-Wire Wire Line
-	1900 1300 2050 1300
-Connection ~ 2050 1300
-Wire Wire Line
-	1900 1600 2050 1600
-Connection ~ 2050 1600
 Wire Wire Line
 	1600 1300 1600 1450
 Wire Wire Line
@@ -1175,4 +1154,33 @@ Wire Wire Line
 	4550 2600 4750 2600
 Text Label 4750 2600 0    50   ~ 0
 CSV
+$Comp
+L Device:Crystal_GND24 Y1
+U 1 1 605627C0
+P 2100 1450
+F 0 "Y1" V 2054 1694 50  0000 L CNN
+F 1 "FA-238 16.0000MB-C3" V 1800 1100 50  0000 L CNN
+F 2 "Britishideas:FA-238" H 2100 1450 50  0001 C CNN
+F 3 "~" H 2100 1450 50  0001 C CNN
+F 4 "FA-238 16.0000MB-C3" H 2100 1450 50  0001 C CNN "manf#"
+	1    2100 1450
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1900 1600 2100 1600
+Wire Wire Line
+	1900 1300 2100 1300
+Connection ~ 2100 1300
+Wire Wire Line
+	2100 1300 2450 1300
+Connection ~ 2100 1600
+Wire Wire Line
+	2100 1600 2900 1600
+Wire Wire Line
+	1900 1450 1600 1450
+Wire Wire Line
+	2300 1450 2400 1450
+Wire Wire Line
+	2400 1450 2400 2000
+Connection ~ 2400 2000
 $EndSCHEMATC
