@@ -324,6 +324,11 @@
       (net 4 "Net-(C4-Pad1)"))
     (pad 2 smd rect (at 1.1 0.8 270) (size 1.4 1.2) (layers F.Cu F.Paste F.Mask)
       (net 1 GND))
+    (model "C:/Users/andy/Dropbox (Personal)/KiCAD Library/3D Models/FA-238--3DModel-STEP-56544.STEP"
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz -90 0 0))
+    )
   )
 
   (module Resistor_SMD:R_0805_2012Metric (layer F.Cu) (tedit 5B36C52B) (tstamp 6049B651)
@@ -1370,10 +1375,10 @@
       (net 11 "Net-(D1-Pad1)"))
     (pad 2 smd rect (at 1.5 0 90) (size 1.5 2.6) (layers F.Cu F.Paste F.Mask)
       (net 2 +5V))
-    (model ${KISYS3DMOD}/LED_SMD.3dshapes/LED_PLCC-2.wrl
+    (model "C:/Users/andy/Dropbox (Personal)/KiCAD Library/3D Models/LED PLCC-2-red.stp"
       (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz 0 0 90))
     )
   )
 
@@ -1452,10 +1457,10 @@
       (net 2 +5V))
     (pad 1 smd rect (at -1.5 0) (size 1.5 2.6) (layers F.Cu F.Paste F.Mask)
       (net 13 "Net-(D3-Pad1)"))
-    (model ${KISYS3DMOD}/LED_SMD.3dshapes/LED_PLCC-2.wrl
+    (model "C:/Users/andy/Dropbox (Personal)/KiCAD Library/3D Models/LED PLCC-2-red.stp"
       (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz 0 0 90))
     )
   )
 
@@ -1479,6 +1484,11 @@
       (net 2 +5V))
     (pad 2 smd rect (at 3.27 0 90) (size 0.91 1.22) (layers F.Cu F.Paste F.Mask)
       (net 6 VBUS))
+    (model "C:/Users/andy/Dropbox (Personal)/KiCAD Library/3D Models/mbr0520lt1g.stp"
+      (offset (xyz 0.2 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz -90 0 0))
+    )
   )
 
   (module Resistor_SMD:R_0805_2012Metric (layer F.Cu) (tedit 5B36C52B) (tstamp 60475AD4)
@@ -1739,10 +1749,10 @@
       (net 1 GND))
     (pad "" np_thru_hole circle (at -2.2 0 270) (size 0.9 0.9) (drill 0.9) (layers *.Cu *.Mask))
     (pad "" np_thru_hole circle (at 2.2 0 270) (size 0.9 0.9) (drill 0.9) (layers *.Cu *.Mask))
-    (model ${KISYS3DMOD}/Connector_USB.3dshapes/USB_Mini-B_Wuerth_65100516121_Horizontal.wrl
-      (at (xyz 0 0 0))
+    (model "C:/Users/andy/Dropbox (Personal)/KiCAD Library/3D Models/USB_Mini_B_SMD_buchse.STEP"
+      (offset (xyz 0 -6.2 2))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz -90 0 0))
     )
   )
 
@@ -1879,10 +1889,10 @@
       (net 7 +12V))
     (pad 2 thru_hole circle (at 2.54 0 180) (size 2.1 2.1) (drill 1.1) (layers *.Cu *.Mask)
       (net 1 GND))
-    (model ${KISYS3DMOD}/TerminalBlock_TE-Connectivity.3dshapes/TerminalBlock_TE_282834-2_1x02_P2.54mm_Horizontal.wrl
-      (at (xyz 0 0 0))
+    (model "C:/Users/andy/Dropbox (Personal)/KiCAD Library/3D Models/c-282834-2-c-3d-colored.stp"
+      (offset (xyz 1.3 -3 3))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz -90 0 0))
     )
   )
 
@@ -2127,6 +2137,11 @@
       (net 12 "Net-(D2-Pad1)"))
     (pad 2 smd rect (at -2.3 0) (size 1.8 5.7) (layers F.Cu F.Paste F.Mask)
       (net 2 +5V))
+    (model "C:/Users/andy/Dropbox (Personal)/KiCAD Library/3D Models/74404063010_Download_STP_WE-LQS-6028_rev1.stp"
+      (offset (xyz 0 0 1.5))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 90))
+    )
   )
 
   (module Package_TO_SOT_SMD:SOT-23 (layer F.Cu) (tedit 5A02FF57) (tstamp 60475C94)
@@ -2428,9 +2443,6 @@
     (fp_text value MMBT2222ALT1G (at 0 2.5) (layer F.Fab)
       (effects (font (size 1 1) (thickness 0.15)))
     )
-    (fp_text user %R (at 0 0 90) (layer F.Fab)
-      (effects (font (size 0.5 0.5) (thickness 0.075)))
-    )
     (fp_line (start 0.76 1.58) (end -0.7 1.58) (layer F.SilkS) (width 0.12))
     (fp_line (start 0.76 -1.58) (end -1.4 -1.58) (layer F.SilkS) (width 0.12))
     (fp_line (start -1.7 1.75) (end -1.7 -1.75) (layer F.CrtYd) (width 0.05))
@@ -2444,6 +2456,9 @@
     (fp_line (start -0.7 -0.95) (end -0.15 -1.52) (layer F.Fab) (width 0.1))
     (fp_line (start -0.15 -1.52) (end 0.7 -1.52) (layer F.Fab) (width 0.1))
     (fp_line (start -0.7 -0.95) (end -0.7 1.5) (layer F.Fab) (width 0.1))
+    (fp_text user %R (at 0 0 90) (layer F.Fab)
+      (effects (font (size 0.5 0.5) (thickness 0.075)))
+    )
     (pad 1 smd rect (at -1 -0.95) (size 0.9 0.8) (layers F.Cu F.Paste F.Mask)
       (net 56 "Net-(Q8-Pad1)"))
     (pad 2 smd rect (at -1 0.95) (size 0.9 0.8) (layers F.Cu F.Paste F.Mask)
@@ -5362,7 +5377,7 @@
   (segment (start 194.376 108.061) (end 194.376 108.519) (width 0.1524) (layer F.Cu) (net 101))
   (segment (start 194.376 108.519) (end 192.278 110.617) (width 0.1524) (layer F.Cu) (net 101))
 
-  (zone (net 1) (net_name GND) (layer F.Cu) (tstamp 604B4372) (hatch edge 0.508)
+  (zone (net 1) (net_name GND) (layer F.Cu) (tstamp 604B4381) (hatch edge 0.508)
     (connect_pads (clearance 0.254))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))
@@ -7221,7 +7236,7 @@
       )
     )
   )
-  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 604B436F) (hatch edge 0.508)
+  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 604B437E) (hatch edge 0.508)
     (connect_pads (clearance 0.254))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))
