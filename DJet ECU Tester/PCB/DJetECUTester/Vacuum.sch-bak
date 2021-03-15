@@ -279,6 +279,7 @@ F 0 "J7" H 7880 3592 50  0000 L CNN
 F 1 "VAC" H 7880 3501 50  0000 L CNN
 F 2 "TerminalBlock_TE-Connectivity:TerminalBlock_TE_282834-6_1x06_P2.54mm_Horizontal" H 7800 3600 50  0001 C CNN
 F 3 "~" H 7800 3600 50  0001 C CNN
+F 4 "282834-6" H 7800 3600 50  0001 C CNN "manf#"
 	1    7800 3600
 	1    0    0    -1  
 $EndComp

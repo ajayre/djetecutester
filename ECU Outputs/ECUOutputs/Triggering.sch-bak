@@ -5,7 +5,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 2 3
 Title "ECU Outputs"
-Date "2021-03-07"
+Date "2021-03-10"
 Rev "1.0"
 Comp "Britishideas.com"
 Comment1 ""
@@ -52,17 +52,6 @@ F 3 "~" H 4650 2250 50  0001 C CNN
 	1    4650 2250
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:Q_NPN_BCE Q2
-U 1 1 6046B283
-P 4550 2700
-F 0 "Q2" H 4741 2746 50  0000 L CNN
-F 1 "Q_NPN_BCE" H 4741 2655 50  0000 L CNN
-F 2 "" H 4750 2800 50  0001 C CNN
-F 3 "~" H 4550 2700 50  0001 C CNN
-	1    4550 2700
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4650 2000 4650 2100
 Wire Wire Line
@@ -107,17 +96,6 @@ Wire Wire Line
 Wire Wire Line
 	3550 2700 3550 2800
 Connection ~ 3900 2700
-$Comp
-L Device:D D4
-U 1 1 6046CD6E
-P 3300 2700
-F 0 "D4" H 3300 2483 50  0000 C CNN
-F 1 "D" H 3300 2574 50  0000 C CNN
-F 2 "" H 3300 2700 50  0001 C CNN
-F 3 "~" H 3300 2700 50  0001 C CNN
-	1    3300 2700
-	-1   0    0    1   
-$EndComp
 Wire Wire Line
 	3450 2700 3550 2700
 Connection ~ 3550 2700
@@ -177,17 +155,6 @@ F 3 "~" H 4650 4150 50  0001 C CNN
 	1    4650 4150
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:Q_NPN_BCE Q3
-U 1 1 6047C095
-P 4550 4600
-F 0 "Q3" H 4741 4646 50  0000 L CNN
-F 1 "Q_NPN_BCE" H 4741 4555 50  0000 L CNN
-F 2 "" H 4750 4700 50  0001 C CNN
-F 3 "~" H 4550 4600 50  0001 C CNN
-	1    4550 4600
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4650 3900 4650 4000
 Wire Wire Line
@@ -217,17 +184,6 @@ Connection ~ 4650 5100
 Wire Wire Line
 	4650 5100 4650 4800
 Connection ~ 3900 4600
-$Comp
-L Device:D D5
-U 1 1 6047C0B3
-P 3300 4600
-F 0 "D5" H 3300 4800 50  0000 C CNN
-F 1 "D" H 3300 4700 50  0000 C CNN
-F 2 "" H 3300 4600 50  0001 C CNN
-F 3 "~" H 3300 4600 50  0001 C CNN
-	1    3300 4600
-	-1   0    0    1   
-$EndComp
 $Comp
 L Device:R R11
 U 1 1 6047C0BB
@@ -351,17 +307,6 @@ F 3 "~" H 9400 2250 50  0001 C CNN
 	1    9400 2250
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:Q_NPN_BCE Q4
-U 1 1 6048BEDB
-P 9300 2700
-F 0 "Q4" H 9491 2746 50  0000 L CNN
-F 1 "Q_NPN_BCE" H 9491 2655 50  0000 L CNN
-F 2 "" H 9500 2800 50  0001 C CNN
-F 3 "~" H 9300 2700 50  0001 C CNN
-	1    9300 2700
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9400 2000 9400 2100
 Wire Wire Line
@@ -406,17 +351,6 @@ Wire Wire Line
 Wire Wire Line
 	8300 2700 8300 2800
 Connection ~ 8650 2700
-$Comp
-L Device:D D6
-U 1 1 6048BEF9
-P 8050 2700
-F 0 "D6" H 8050 2483 50  0000 C CNN
-F 1 "D" H 8050 2574 50  0000 C CNN
-F 2 "" H 8050 2700 50  0001 C CNN
-F 3 "~" H 8050 2700 50  0001 C CNN
-	1    8050 2700
-	-1   0    0    1   
-$EndComp
 Wire Wire Line
 	8200 2700 8300 2700
 Connection ~ 8300 2700
@@ -476,17 +410,6 @@ F 3 "~" H 9400 4150 50  0001 C CNN
 	1    9400 4150
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:Q_NPN_BCE Q5
-U 1 1 6048BF1C
-P 9300 4600
-F 0 "Q5" H 9491 4646 50  0000 L CNN
-F 1 "Q_NPN_BCE" H 9491 4555 50  0000 L CNN
-F 2 "" H 9500 4700 50  0001 C CNN
-F 3 "~" H 9300 4600 50  0001 C CNN
-	1    9300 4600
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9400 3900 9400 4000
 Wire Wire Line
@@ -516,17 +439,6 @@ Connection ~ 9400 5100
 Wire Wire Line
 	9400 5100 9400 4800
 Connection ~ 8650 4600
-$Comp
-L Device:D D7
-U 1 1 6048BF32
-P 8050 4600
-F 0 "D7" H 8050 4800 50  0000 C CNN
-F 1 "D" H 8050 4700 50  0000 C CNN
-F 2 "" H 8050 4600 50  0001 C CNN
-F 3 "~" H 8050 4600 50  0001 C CNN
-	1    8050 4600
-	-1   0    0    1   
-$EndComp
 $Comp
 L Device:R R20
 U 1 1 6048BF38
@@ -617,12 +529,127 @@ Connection ~ 4650 2450
 Wire Wire Line
 	4650 2450 4650 2500
 Wire Wire Line
-	4350 2450 4350 4200
+	4350 2450 4350 2700
 Wire Wire Line
 	9100 2450 9400 2450
 Connection ~ 9400 2450
 Wire Wire Line
 	9400 2450 9400 2500
+$Comp
+L Device:Q_NPN_BEC Q?
+U 1 1 60505E8E
+P 4550 2700
+AR Path="/60505E8E" Ref="Q?"  Part="1" 
+AR Path="/60469408/60505E8E" Ref="Q?"  Part="1" 
+F 0 "Q?" V 4878 2700 50  0000 C CNN
+F 1 "BC817-40-TP" V 4787 2700 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 4750 2800 50  0001 C CNN
+F 3 "~" H 4550 2700 50  0001 C CNN
+F 4 "BC817-40-TP" V 4550 2700 50  0001 C CNN "manf#"
+	1    4550 2700
+	1    0    0    -1  
+$EndComp
+Connection ~ 4350 2700
+Wire Wire Line
+	4350 2700 4350 4200
+$Comp
+L Device:Q_NPN_BEC Q?
+U 1 1 60508434
+P 4550 4600
+AR Path="/60508434" Ref="Q?"  Part="1" 
+AR Path="/60469408/60508434" Ref="Q?"  Part="1" 
+F 0 "Q?" V 4878 4600 50  0000 C CNN
+F 1 "BC817-40-TP" V 4787 4600 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 4750 4700 50  0001 C CNN
+F 3 "~" H 4550 4600 50  0001 C CNN
+F 4 "BC817-40-TP" V 4550 4600 50  0001 C CNN "manf#"
+	1    4550 4600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_NPN_BEC Q?
+U 1 1 60509849
+P 9300 4600
+AR Path="/60509849" Ref="Q?"  Part="1" 
+AR Path="/60469408/60509849" Ref="Q?"  Part="1" 
+F 0 "Q?" V 9628 4600 50  0000 C CNN
+F 1 "BC817-40-TP" V 9537 4600 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 9500 4700 50  0001 C CNN
+F 3 "~" H 9300 4600 50  0001 C CNN
+F 4 "BC817-40-TP" V 9300 4600 50  0001 C CNN "manf#"
+	1    9300 4600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_NPN_BEC Q?
+U 1 1 6050AB28
+P 9300 2700
+AR Path="/6050AB28" Ref="Q?"  Part="1" 
+AR Path="/60469408/6050AB28" Ref="Q?"  Part="1" 
+F 0 "Q?" V 9628 2700 50  0000 C CNN
+F 1 "BC817-40-TP" V 9537 2700 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 9500 2800 50  0001 C CNN
+F 3 "~" H 9300 2700 50  0001 C CNN
+F 4 "BC817-40-TP" V 9300 2700 50  0001 C CNN "manf#"
+	1    9300 2700
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
 	9100 2450 9100 4200
+$Comp
+L Device:D D?
+U 1 1 6052493C
+P 3300 2700
+AR Path="/6052493C" Ref="D?"  Part="1" 
+AR Path="/60469408/6052493C" Ref="D?"  Part="1" 
+F 0 "D?" H 3300 2917 50  0000 C CNN
+F 1 "MMSD4148T1G" H 3300 2826 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 3300 2700 50  0001 C CNN
+F 3 "~" H 3300 2700 50  0001 C CNN
+F 4 "MMSD4148T1G" H 3300 2700 50  0001 C CNN "manf#"
+	1    3300 2700
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:D D?
+U 1 1 60526BCC
+P 3300 4600
+AR Path="/60526BCC" Ref="D?"  Part="1" 
+AR Path="/60469408/60526BCC" Ref="D?"  Part="1" 
+F 0 "D?" H 3300 4817 50  0000 C CNN
+F 1 "MMSD4148T1G" H 3300 4726 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 3300 4600 50  0001 C CNN
+F 3 "~" H 3300 4600 50  0001 C CNN
+F 4 "MMSD4148T1G" H 3300 4600 50  0001 C CNN "manf#"
+	1    3300 4600
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:D D?
+U 1 1 6052753B
+P 8050 4600
+AR Path="/6052753B" Ref="D?"  Part="1" 
+AR Path="/60469408/6052753B" Ref="D?"  Part="1" 
+F 0 "D?" H 8050 4817 50  0000 C CNN
+F 1 "MMSD4148T1G" H 8050 4726 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 8050 4600 50  0001 C CNN
+F 3 "~" H 8050 4600 50  0001 C CNN
+F 4 "MMSD4148T1G" H 8050 4600 50  0001 C CNN "manf#"
+	1    8050 4600
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:D D?
+U 1 1 60528650
+P 8050 2700
+AR Path="/60528650" Ref="D?"  Part="1" 
+AR Path="/60469408/60528650" Ref="D?"  Part="1" 
+F 0 "D?" H 8050 2917 50  0000 C CNN
+F 1 "MMSD4148T1G" H 8050 2826 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 8050 2700 50  0001 C CNN
+F 3 "~" H 8050 2700 50  0001 C CNN
+F 4 "MMSD4148T1G" H 8050 2700 50  0001 C CNN "manf#"
+	1    8050 2700
+	-1   0    0    1   
+$EndComp
 $EndSCHEMATC
