@@ -74,8 +74,6 @@ F 3 "~" H 4950 4350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5350 3800 5350 3850
-Wire Wire Line
 	5350 4300 5350 4600
 Wire Wire Line
 	4850 4100 4950 4100
@@ -133,11 +131,6 @@ $EndComp
 Wire Wire Line
 	5350 3400 5350 3450
 Wire Wire Line
-	5900 3850 5350 3850
-Connection ~ 5350 3850
-Wire Wire Line
-	5350 3850 5350 3900
-Wire Wire Line
 	6200 3650 6200 3450
 Wire Wire Line
 	6200 3450 5350 3450
@@ -148,4 +141,26 @@ Wire Wire Line
 	6200 4050 6200 4150
 Wire Wire Line
 	6200 4150 6950 4150
+$Comp
+L Device:R R?
+U 1 1 6050F32C
+P 5650 3850
+AR Path="/604BF505/6050F32C" Ref="R?"  Part="1" 
+AR Path="/60469920/6050F32C" Ref="R38"  Part="1" 
+F 0 "R38" V 5443 3850 50  0000 C CNN
+F 1 "1k" V 5534 3850 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 5580 3850 50  0001 C CNN
+F 3 "~" H 5650 3850 50  0001 C CNN
+	1    5650 3850
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5350 3800 5350 3850
+Wire Wire Line
+	5800 3850 5900 3850
+Wire Wire Line
+	5500 3850 5350 3850
+Connection ~ 5350 3850
+Wire Wire Line
+	5350 3850 5350 3900
 $EndSCHEMATC
