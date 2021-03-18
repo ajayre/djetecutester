@@ -1,13 +1,17 @@
 // M117 D-Jet engine simulation
 
+#include <Arduino.h>
 #include "Engine.h"
+
+// special value to indicate no manifold pressure required
+#define NO_PRESSURE -1
 
 static int EngineSpeed;                                    // RPM
 static int AirTempF;
 static int CoolantTempF;
 static int ThrottlePosition;                               // %
 static throttledirection_t ThrottleDirection;
-static int Vacuum;                                         // in Hg
+static int Pressure;                                       // manifold, inHg
 static coldstartvalve_t ColdStartValve;
 
 // set new engine parameters
@@ -17,15 +21,15 @@ void Engine_Set
   int CoolantTempF,                                        // new coolant temperature in F
   int ThrottlePosition,                                    // new throttle position 0% -> 100%
   throttledirection_t ThrottleDirection,                   // new throttle direction
-  int Vacuum,                                              // new manifold vacuum
+  int Pressure,                                            // new manifold pressure
   coldstartvalve_t ColdStartValve                          // new cold start valve position
   )
 {
   Engine_SetEngineSpeed(EngineSpeed);
   Engine_SetCoolantTempF(CoolantTempF);
-  Engine_SetThrottlePosition(ThrottlePosition);
   Engine_SetThrottleDirection(ThrottleDirection);
-  Engine_SetVacuum(Vacuum);
+  Engine_SetThrottlePosition(ThrottlePosition);
+  Engine_SetManifoldPressure(Pressure);
   Engine_SetColdStartValve(ColdStartValve);
 }
 
@@ -74,13 +78,20 @@ void Engine_SetThrottleDirection
   ThrottleDirection = NewThrottleDirection;
 }
 
-// sets the new vacuum level from the manifold
-void Engine_SetVacuum
+// sets the new pressure level from the manifold
+void Engine_SetManifoldPressure
   (
-  int NewVacuum                                            // new vacuum level in in Hg
+  int NewPressure                                          // new pressure level in inHg
   )
 {
-  Vacuum = NewVacuum;
+  Pressure = NewPressure;
+
+  if (Pressure != NO_PRESSURE)
+  {
+    Serial.print(F("ACTION: Manually set pressure to "));
+    Serial.print(Pressure);
+    Serial.println(F(" inHg"));
+  }
 }
 
 // sets the new cold start value position
@@ -110,13 +121,22 @@ void Engine_Hotidle
   Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);  // fixme - csv correct?
 }
 
+// turns the engine off
+void Engine_Off
+  (
+  void  
+  )
+{
+  Engine_Set(0, 0, 0, THROTTLE_NONE, NO_PRESSURE, CSV_OPEN);  // fixme - csv correct?
+}
+
 // initializes engine simulation
 void Engine_Init
    (
    void
    )
 {
-  Engine_ColdIdle();
+  Engine_Off();
 
   AirTempF = 72;
 }

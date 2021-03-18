@@ -59,10 +59,10 @@ extern void Engine_SetThrottleDirection
   throttledirection_t NewThrottleDirection                 // new throttle direction
   );
 
-// sets the new vacuum level from the manifold
-extern void Engine_SetVacuum
+// sets the new pressure level from the manifold
+extern void Engine_SetManifoldPressure
   (
-  int NewVacuum                                            // new vacuum level in in Hg
+  int NewPressure                                          // new pressure level in inHg
   );
 
 // sets the new cold start value position
@@ -78,7 +78,7 @@ extern void Engine_Set
   int CoolantTempF,                                        // new coolant temperature in F
   int ThrottlePosition,                                    // new throttle position 0% -> 100%
   throttledirection_t ThrottleDirection,                   // new throttle direction
-  int Vacuum,                                              // new manifold vacuum
+  int Pressure,                                            // new manifold pressure
   coldstartvalve_t ColdStartValve                          // new cold start valve position
   );
 
