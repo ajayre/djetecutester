@@ -33,6 +33,27 @@ void Engine_Set
   Engine_SetColdStartValve(ColdStartValve);
 }
 
+// get current engine parameters
+void Engine_Get
+  (
+  int *pEngineSpeed,                                       // speed in RPM
+  int *pCoolantTempF,                                      // coolant temperature in F
+  int *pThrottlePosition,                                  // throttle position 0% -> 100%
+  throttledirection_t *pThrottleDirection,                 // throttle direction
+  int *pPressure,                                          // manifold pressure
+  coldstartvalve_t *pColdStartValve,                       // cold start valve position
+  int *pAirTempF                                           // air temperature
+  )
+{
+  *pEngineSpeed = EngineSpeed;
+  *pCoolantTempF = CoolantTempF;
+  *pThrottlePosition = ThrottlePosition;
+  *pThrottleDirection = ThrottleDirection;
+  *pPressure = Pressure;
+  *pColdStartValve = ColdStartValve;
+  *pAirTempF = AirTempF;
+}
+
 // sets the engine speed
 void Engine_SetEngineSpeed
   (

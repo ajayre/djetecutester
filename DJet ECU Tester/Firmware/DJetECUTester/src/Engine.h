@@ -82,6 +82,18 @@ extern void Engine_Set
   coldstartvalve_t ColdStartValve                          // new cold start valve position
   );
 
+// get current engine parameters
+extern void Engine_Get
+  (
+  int *pEngineSpeed,                                       // speed in RPM
+  int *pCoolantTempF,                                      // coolant temperature in F
+  int *pThrottlePosition,                                  // throttle position 0% -> 100%
+  throttledirection_t *pThrottleDirection,                 // throttle direction
+  int *pPressure,                                          // manifold pressure
+  coldstartvalve_t *pColdStartValve,                       // cold start valve position
+  int *pAirTempF                                           // air temperature
+  );
+
 // sets the engine to cold idle state
 extern void Engine_ColdIdle
   (
