@@ -251,7 +251,7 @@ static void Execute_Top_Level_Menu_Item
   }
 }
 
-// processes the input gived by the user
+// processes the input given by the user
 static void Process_User_Input
   (
   char *Input                                              // null terminated input string
@@ -375,24 +375,12 @@ static void Process_User_Input
   }
 }
 
-void setup() {
-  // start serial output
-  Serial.begin(BAUDRATE);
-  while (!Serial) delay(1);
-  Serial.flush();
-
-  ShowBanner();
-
-  Engine_Init();
-  Serial.println(F("Engine is off"));
-
-  CurrentMenuLevel = MENU_TOP_LEVEL;
-  ShowMenu();
-}
-
-void loop() {
-  Engine_Process();
-
+// operates the user interface
+static void Menu_Process
+  (
+  void
+  )
+{
   // if key pressed
   if (Serial.peek() != -1)
   {
@@ -437,4 +425,26 @@ void loop() {
       }
     }
   }
+}
+
+// initialization
+void setup() {
+  // start serial output
+  Serial.begin(BAUDRATE);
+  while (!Serial) delay(1);
+  Serial.flush();
+
+  ShowBanner();
+
+  Engine_Init();
+  Serial.println(F("Engine is off"));
+
+  CurrentMenuLevel = MENU_TOP_LEVEL;
+  ShowMenu();
+}
+
+// continually called
+void loop() {
+  Engine_Process();
+  Menu_Process();
 }
