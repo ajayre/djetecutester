@@ -13,6 +13,6 @@ void setup() {
 
 // continually called
 void loop() {
-  Engine_Process();
   Menu_Process();
+  Engine_Process();
 }
