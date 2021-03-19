@@ -1,4 +1,5 @@
-// M117 D-Jet engine simulation
+// Mercedes V8 DJet Engine Simulator
+// (C) andy@britishideas.com 2021
 
 #include <Arduino.h>
 #include "Engine.h"
@@ -27,8 +28,7 @@ void Engine_Set
 {
   Engine_SetEngineSpeed(EngineSpeed);
   Engine_SetCoolantTempF(CoolantTempF);
-  Engine_SetThrottleDirection(ThrottleDirection);
-  Engine_SetThrottlePosition(ThrottlePosition);
+  Engine_SetThrottle(ThrottlePosition, ThrottleDirection);
   Engine_SetManifoldPressure(Pressure);
   Engine_SetColdStartValve(ColdStartValve);
 }
@@ -81,21 +81,14 @@ void Engine_SetCoolantTempF
   CoolantTempF = NewCoolantTempF;
 }
 
-// sets the throttle position
-void Engine_SetThrottlePosition
+// sets the throttle position and direction
+void Engine_SetThrottle
   (
-  int NewThrottlePosition                                  // new throttle position 0% -> 100%
-  )
-{
-  ThrottlePosition = NewThrottlePosition;
-}
-
-// sets the throttle direction
-void Engine_SetThrottleDirection
-  (
+  int NewThrottlePosition,                                 // new throttle position 0% -> 100%
   throttledirection_t NewThrottleDirection                 // new throttle direction
   )
 {
+  ThrottlePosition = NewThrottlePosition;
   ThrottleDirection = NewThrottleDirection;
 }
 
@@ -109,9 +102,9 @@ void Engine_SetManifoldPressure
 
   if (Pressure != NO_PRESSURE)
   {
-    Serial.print(F("ACTION: Manually set pressure to "));
+    Serial.print(F("ACTION: MANUALLT SET PRESSURE TO "));
     Serial.print(Pressure);
-    Serial.println(F(" inHg"));
+    Serial.println(F(" INHG"));
   }
 }
 
@@ -134,12 +127,62 @@ void Engine_ColdIdle
 }
 
 // sets the engine to hot idle state
-void Engine_Hotidle
+void Engine_HotIdle
   (
   void  
   )
 {
   Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);  // fixme - csv correct?
+}
+
+// sets the engine to cruising at 30 MPH
+void Engine_Cruise30MPH
+  (
+  void  
+  )
+{
+  // fixme = to do
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
+}
+
+// sets the engine to cruising at 70 MPH
+void Engine_Cruise70MPH
+  (
+  void  
+  )
+{
+  // fixme = to do
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
+}
+
+// sets the engine to gentle acceleration
+void Engine_GentleAcceleration
+  (
+  void  
+  )
+{
+  // fixme = to do
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
+}
+
+// sets the engine to moderate acceleration
+void Engine_ModerateAcceleration
+  (
+  void  
+  )
+{
+  // fixme = to do
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
+}
+
+// sets the engine to hard acceleration
+void Engine_HardAcceleration
+  (
+  void  
+  )
+{
+  // fixme = to do
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
 }
 
 // turns the engine off

@@ -1,4 +1,5 @@
-// M117 D-Jet engine simulation
+// Mercedes V8 DJet Engine Simulator
+// (C) andy@britishideas.com 2021
 
 #ifndef _ENGINEH_
 #define _ENGINEH_
@@ -47,15 +48,10 @@ extern void Engine_SetCoolantTempF
   int NewCoolantTempF                                      // new coolant temperature in F
   );
 
-// sets the throttle position
-extern void Engine_SetThrottlePosition
+// sets the throttle position and direction
+extern void Engine_SetThrottle
   (
-  int NewThrottlePosition                                  // new throttle position 0% -> 100%
-  );
-
-// sets the throttle direction
-extern void Engine_SetThrottleDirection
-  (
+  int NewThrottlePosition,                                 // new throttle position 0% -> 100%
   throttledirection_t NewThrottleDirection                 // new throttle direction
   );
 
@@ -101,7 +97,37 @@ extern void Engine_ColdIdle
   );
 
 // sets the engine to hot idle state
-extern void Engine_Hotidle
+extern void Engine_HotIdle
+  (
+  void  
+  );
+
+// sets the engine to cruising at 30 MPH
+extern void Engine_Cruise30MPH
+  (
+  void  
+  );
+
+// sets the engine to cruising at 70 MPH
+extern void Engine_Cruise70MPH
+  (
+  void  
+  );
+
+// sets the engine to gentle acceleration
+extern void Engine_GentleAcceleration
+  (
+  void  
+  );
+
+// sets the engine to moderate acceleration
+extern void Engine_ModerateAcceleration
+  (
+  void  
+  );
+
+// sets the engine to hard acceleration
+extern void Engine_HardAcceleration
   (
   void  
   );
