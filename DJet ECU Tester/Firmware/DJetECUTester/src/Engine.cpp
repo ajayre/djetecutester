@@ -13,7 +13,6 @@ static int CoolantTempF;
 static int ThrottlePosition;                               // %
 static throttledirection_t ThrottleDirection;
 static int Pressure;                                       // manifold, inHg
-static coldstartvalve_t ColdStartValve;
 
 // set new engine parameters
 void Engine_Set
@@ -22,15 +21,13 @@ void Engine_Set
   int CoolantTempF,                                        // new coolant temperature in F
   int ThrottlePosition,                                    // new throttle position 0% -> 100%
   throttledirection_t ThrottleDirection,                   // new throttle direction
-  int Pressure,                                            // new manifold pressure
-  coldstartvalve_t ColdStartValve                          // new cold start valve position
+  int Pressure                                             // new manifold pressure
   )
 {
   Engine_SetEngineSpeed(EngineSpeed);
   Engine_SetCoolantTempF(CoolantTempF);
   Engine_SetThrottle(ThrottlePosition, ThrottleDirection);
   Engine_SetManifoldPressure(Pressure);
-  Engine_SetColdStartValve(ColdStartValve);
 }
 
 // get current engine parameters
@@ -41,7 +38,6 @@ void Engine_Get
   int *pThrottlePosition,                                  // throttle position 0% -> 100%
   throttledirection_t *pThrottleDirection,                 // throttle direction
   int *pPressure,                                          // manifold pressure
-  coldstartvalve_t *pColdStartValve,                       // cold start valve position
   int *pAirTempF                                           // air temperature
   )
 {
@@ -50,7 +46,6 @@ void Engine_Get
   *pThrottlePosition = ThrottlePosition;
   *pThrottleDirection = ThrottleDirection;
   *pPressure = Pressure;
-  *pColdStartValve = ColdStartValve;
   *pAirTempF = AirTempF;
 }
 
@@ -108,22 +103,13 @@ void Engine_SetManifoldPressure
   }
 }
 
-// sets the new cold start value position
-void Engine_SetColdStartValve
-  (
-  coldstartvalve_t NewColdStartValve                       // new cold start valve position
-  )
-{
-  ColdStartValve = NewColdStartValve;
-}
-
 // sets the engine to cold idle state
 void Engine_ColdIdle
   (
   void  
   )
 {
-  Engine_Set(1200, 72, 0, THROTTLE_NONE, 15, CSV_CLOSED); // fixme - csv correct?
+  Engine_Set(1200, 72, 0, THROTTLE_NONE, 15);
 }
 
 // sets the engine to hot idle state
@@ -132,7 +118,7 @@ void Engine_HotIdle
   void  
   )
 {
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);  // fixme - csv correct?
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
 }
 
 // sets the engine to cruising at 30 MPH
@@ -142,7 +128,7 @@ void Engine_Cruise30MPH
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
 }
 
 // sets the engine to cruising at 70 MPH
@@ -152,7 +138,7 @@ void Engine_Cruise70MPH
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
 }
 
 // sets the engine to gentle acceleration
@@ -162,7 +148,7 @@ void Engine_GentleAcceleration
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
 }
 
 // sets the engine to moderate acceleration
@@ -172,7 +158,7 @@ void Engine_ModerateAcceleration
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
 }
 
 // sets the engine to hard acceleration
@@ -182,7 +168,7 @@ void Engine_HardAcceleration
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, CSV_OPEN);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
 }
 
 // turns the engine off
@@ -191,7 +177,7 @@ void Engine_Off
   void  
   )
 {
-  Engine_Set(0, 0, 0, THROTTLE_NONE, NO_PRESSURE, CSV_OPEN);  // fixme - csv correct?
+  Engine_Set(0, 0, 0, THROTTLE_NONE, NO_PRESSURE);
 }
 
 // initializes engine simulation
@@ -203,6 +189,8 @@ void Engine_Init
   Engine_Off();
 
   AirTempF = 72;
+
+  // fixme - to do - set CSV output low
 }
 
 // call repeatedly to implement the engine simulation

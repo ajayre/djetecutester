@@ -27,7 +27,6 @@
 #define MENU_SET_AIR_TEMP     10
 #define MENU_SET_ENGINE_SPEED 11
 #define MENU_SET_THROTTLE     12
-#define MENU_SET_CSV          13
 #define MENU_SET_THROTTLE2    100
 
 // limits
@@ -82,7 +81,6 @@ static void ShowMenu
       Serial.println(F("  10. Set air temp"));
       Serial.println(F("  11. Set engine speed"));
       Serial.println(F("  12. Set throttle"));
-      Serial.println(F("  13. Set Cold Start Valve"));
       Serial.println();
       Serial.println(F("Enter a number and press Enter:"));
       break;
@@ -122,10 +120,6 @@ static void ShowMenu
     case MENU_SET_THROTTLE2:
       Serial.print(F("Enter new throttle direction (U or D):"));
       break;
-
-    case MENU_SET_CSV:
-      Serial.print(F("Enter new cold start valve position (O or C):"));
-      break;
   }
 }
 
@@ -143,9 +137,8 @@ static void ShowSettings
   int ThrottlePosition;
   throttledirection_t ThrottleDirection;
   int Pressure;
-  coldstartvalve_t ColdStartValve;
   int AirTempF;
-  Engine_Get(&EngineSpeed, &CoolantTempF, &ThrottlePosition, &ThrottleDirection, &Pressure, &ColdStartValve, &AirTempF);
+  Engine_Get(&EngineSpeed, &CoolantTempF, &ThrottlePosition, &ThrottleDirection, &Pressure, &AirTempF);
 
   Serial.print(F("Settings: airtemp="));
   Serial.print(AirTempF);
@@ -162,9 +155,7 @@ static void ShowSettings
     case THROTTLE_DECELERATING: Serial.print(F("decel")); break;
   }
   Serial.print(F(", engspeed="));
-  Serial.print(EngineSpeed);
-  Serial.print(F(", csv="));
-  Serial.println(ColdStartValve == CSV_OPEN ? F("open") : F("closed"));
+  Serial.println(EngineSpeed);
 }
 
 // executes a top level menu item
@@ -241,7 +232,6 @@ static void Execute_Top_Level_Menu_Item
     case MENU_SET_AIR_TEMP:
     case MENU_SET_ENGINE_SPEED:
     case MENU_SET_THROTTLE:
-    case MENU_SET_CSV:
       CurrentMenuLevel = ItemNumber;
       ShowMenu();
       break;
@@ -350,23 +340,6 @@ static void Process_User_Input
 
         Engine_SetThrottle(ThrottlePos, Accel ? THROTTLE_ACCELERATING : THROTTLE_DECELERATING);
         Serial.println(F("Throttle position and direction set"));
-        ShowSettings();
-
-        CurrentMenuLevel = MENU_TOP_LEVEL;
-        ShowMenu();
-      }
-      break;
-
-    case MENU_SET_CSV:
-      {
-        bool Open = false;
-        if ((Input[0] == 'O') || (Input[0] == 'o'))
-        {
-          Open = true;
-        }
-
-        Engine_SetColdStartValve(Open ? CSV_OPEN : CSV_CLOSED);
-        Serial.println(F("Cold Start Valve position set"));
         ShowSettings();
 
         CurrentMenuLevel = MENU_TOP_LEVEL;
