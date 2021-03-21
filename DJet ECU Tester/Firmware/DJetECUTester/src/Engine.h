@@ -55,6 +55,12 @@ extern void Engine_SetManifoldPressure
   int NewPressure                                          // new pressure level in inHg
   );
 
+// sets the cranking state
+extern void Engine_SetCranking
+  (
+  bool Cranking                                            // true if cranking
+  );
+
 // set new engine parameters
 extern void Engine_Set
   (
@@ -62,7 +68,8 @@ extern void Engine_Set
   int CoolantTempF,                                        // new coolant temperature in F
   int ThrottlePosition,                                    // new throttle position 0% -> 100%
   throttledirection_t ThrottleDirection,                   // new throttle direction
-  int Pressure                                             // new manifold pressure
+  int Pressure,                                            // new manifold pressure
+  bool Cranking                                            // new cranking state
   );
 
 // get current engine parameters
@@ -73,7 +80,20 @@ extern void Engine_Get
   int *pThrottlePosition,                                  // throttle position 0% -> 100%
   throttledirection_t *pThrottleDirection,                 // throttle direction
   int *pPressure,                                          // manifold pressure
-  int *pAirTempF                                           // air temperature
+  int *pAirTempF,                                          // air temperature
+  bool *pCranking                                          // cranking state
+  );
+
+// turns the engine off
+extern void Engine_Off
+  (
+  void  
+  );
+
+// sets the engine to cranking
+extern void Engine_Cranking
+  (
+  void  
   );
 
 // sets the engine to cold idle state

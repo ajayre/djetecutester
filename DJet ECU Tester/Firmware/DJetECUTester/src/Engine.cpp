@@ -13,6 +13,7 @@ static int CoolantTempF;
 static int ThrottlePosition;                               // %
 static throttledirection_t ThrottleDirection;
 static int Pressure;                                       // manifold, inHg
+static bool Cranking;
 
 // set new engine parameters
 void Engine_Set
@@ -21,13 +22,15 @@ void Engine_Set
   int CoolantTempF,                                        // new coolant temperature in F
   int ThrottlePosition,                                    // new throttle position 0% -> 100%
   throttledirection_t ThrottleDirection,                   // new throttle direction
-  int Pressure                                             // new manifold pressure
+  int Pressure,                                            // new manifold pressure
+  bool Cranking                                            // new cranking state
   )
 {
   Engine_SetEngineSpeed(EngineSpeed);
   Engine_SetCoolantTempF(CoolantTempF);
   Engine_SetThrottle(ThrottlePosition, ThrottleDirection);
   Engine_SetManifoldPressure(Pressure);
+  Engine_SetCranking(Cranking);
 }
 
 // get current engine parameters
@@ -38,7 +41,8 @@ void Engine_Get
   int *pThrottlePosition,                                  // throttle position 0% -> 100%
   throttledirection_t *pThrottleDirection,                 // throttle direction
   int *pPressure,                                          // manifold pressure
-  int *pAirTempF                                           // air temperature
+  int *pAirTempF,                                          // air temperature
+  bool *pCranking                                          // cranking state
   )
 {
   *pEngineSpeed = EngineSpeed;
@@ -47,6 +51,7 @@ void Engine_Get
   *pThrottleDirection = ThrottleDirection;
   *pPressure = Pressure;
   *pAirTempF = AirTempF;
+  *pCranking = Cranking;
 }
 
 // sets the engine speed
@@ -103,13 +108,22 @@ void Engine_SetManifoldPressure
   }
 }
 
+// sets the cranking state
+extern void Engine_SetCranking
+  (
+  bool NewCranking                                         // true if cranking
+  )
+{
+  Cranking = NewCranking;
+}
+
 // sets the engine to cold idle state
 void Engine_ColdIdle
   (
   void  
   )
 {
-  Engine_Set(1200, 72, 0, THROTTLE_NONE, 15);
+  Engine_Set(1200, 72, 0, THROTTLE_NONE, 15, false);
 }
 
 // sets the engine to hot idle state
@@ -118,7 +132,7 @@ void Engine_HotIdle
   void  
   )
 {
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
 }
 
 // sets the engine to cruising at 30 MPH
@@ -128,7 +142,7 @@ void Engine_Cruise30MPH
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
 }
 
 // sets the engine to cruising at 70 MPH
@@ -138,7 +152,7 @@ void Engine_Cruise70MPH
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
 }
 
 // sets the engine to gentle acceleration
@@ -148,7 +162,7 @@ void Engine_GentleAcceleration
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
 }
 
 // sets the engine to moderate acceleration
@@ -158,7 +172,7 @@ void Engine_ModerateAcceleration
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
 }
 
 // sets the engine to hard acceleration
@@ -168,7 +182,7 @@ void Engine_HardAcceleration
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15);
+  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
 }
 
 // turns the engine off
@@ -177,7 +191,16 @@ void Engine_Off
   void  
   )
 {
-  Engine_Set(0, 0, 0, THROTTLE_NONE, NO_PRESSURE);
+  Engine_Set(0, 0, 0, THROTTLE_NONE, NO_PRESSURE, false);
+}
+
+// sets the engine to cranking
+void Engine_Cranking
+  (
+  void  
+  )
+{
+  Engine_Set(0, 0, 0, THROTTLE_NONE, NO_PRESSURE, true);
 }
 
 // initializes engine simulation
@@ -189,8 +212,6 @@ void Engine_Init
   Engine_Off();
 
   AirTempF = 72;
-
-  // fixme - to do - set CSV output low
 }
 
 // call repeatedly to implement the engine simulation

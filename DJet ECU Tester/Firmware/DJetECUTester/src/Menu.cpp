@@ -11,22 +11,25 @@
 
 #define MAX_INPUTBUFFER_SIZE 10
 
+#define CHAR_BS 8
 #define CHAR_LF 10
 #define CHAR_CR 13
 
 #define MENU_TOP_LEVEL        0
 #define MENU_SHOW_SETTINGS    1
-#define MENU_COLD_IDLE        2
-#define MENU_HOT_IDLE         3
-#define MENU_CRUISE_30MPH     4
-#define MENU_CRUISE_70MPH     5
-#define MENU_GENTLE_ACCEL     6
-#define MENU_MODERATE_ACCEL   7
-#define MENU_HARD_ACCEL       8
-#define MENU_SET_COOLANT_TEMP 9
-#define MENU_SET_AIR_TEMP     10
-#define MENU_SET_ENGINE_SPEED 11
-#define MENU_SET_THROTTLE     12
+#define MENU_OFF              2
+#define MENU_CRANKING         3
+#define MENU_COLD_IDLE        4
+#define MENU_HOT_IDLE         5
+#define MENU_CRUISE_30MPH     6
+#define MENU_CRUISE_70MPH     7
+#define MENU_GENTLE_ACCEL     8
+#define MENU_MODERATE_ACCEL   9
+#define MENU_HARD_ACCEL       10
+#define MENU_SET_COOLANT_TEMP 11
+#define MENU_SET_AIR_TEMP     12
+#define MENU_SET_ENGINE_SPEED 13
+#define MENU_SET_THROTTLE     14
 #define MENU_SET_THROTTLE2    100
 
 // limits
@@ -69,18 +72,20 @@ static void ShowMenu
       Serial.println(F("MAIN MENU"));
       Serial.println(F("   1. Show current settings"));
       Serial.println(F("Presets:"));
-      Serial.println(F("   2. Cold idle"));
-      Serial.println(F("   3. Hot idle"));
-      Serial.println(F("   4. Cruise 30MPH"));
-      Serial.println(F("   5. Cruise 70MPH"));
-      Serial.println(F("   6. Gentle acceleration"));
-      Serial.println(F("   7. Moderate acceleration"));
-      Serial.println(F("   8. Hard acceleration"));
+      Serial.println(F("   2. Off"));
+      Serial.println(F("   3. Cranking"));
+      Serial.println(F("   4. Cold idle"));
+      Serial.println(F("   5. Hot idle"));
+      Serial.println(F("   6. Cruise 30MPH"));
+      Serial.println(F("   7. Cruise 70MPH"));
+      Serial.println(F("   8. Gentle acceleration"));
+      Serial.println(F("   9. Moderate acceleration"));
+      Serial.println(F("  10. Hard acceleration"));
       Serial.println(F("Customize:"));
-      Serial.println(F("   9. Set coolant temp"));
-      Serial.println(F("  10. Set air temp"));
-      Serial.println(F("  11. Set engine speed"));
-      Serial.println(F("  12. Set throttle"));
+      Serial.println(F("  11. Set coolant temp"));
+      Serial.println(F("  12. Set air temp"));
+      Serial.println(F("  13. Set engine speed"));
+      Serial.println(F("  14. Set throttle"));
       Serial.println();
       Serial.println(F("Enter a number and press Enter:"));
       break;
@@ -138,7 +143,8 @@ static void ShowSettings
   throttledirection_t ThrottleDirection;
   int Pressure;
   int AirTempF;
-  Engine_Get(&EngineSpeed, &CoolantTempF, &ThrottlePosition, &ThrottleDirection, &Pressure, &AirTempF);
+  bool Cranking;
+  Engine_Get(&EngineSpeed, &CoolantTempF, &ThrottlePosition, &ThrottleDirection, &Pressure, &AirTempF, &Cranking);
 
   Serial.print(F("Settings: airtemp="));
   Serial.print(AirTempF);
@@ -155,7 +161,9 @@ static void ShowSettings
     case THROTTLE_DECELERATING: Serial.print(F("decel")); break;
   }
   Serial.print(F(", engspeed="));
-  Serial.println(EngineSpeed);
+  Serial.print(EngineSpeed);
+  Serial.print(F(", cranking="));
+  Serial.println(Cranking ? F("yes") : F("no"));
 }
 
 // executes a top level menu item
@@ -167,6 +175,22 @@ static void Execute_Top_Level_Menu_Item
   switch (ItemNumber)
   {
     case MENU_SHOW_SETTINGS:
+      ShowSettings();
+      CurrentMenuLevel = MENU_TOP_LEVEL;
+      ShowMenu();
+      break;
+
+    case MENU_OFF:
+      Engine_Off();
+      Serial.println(F("Engine turned off"));
+      ShowSettings();
+      CurrentMenuLevel = MENU_TOP_LEVEL;
+      ShowMenu();
+      break;
+
+    case MENU_CRANKING:
+      Engine_Cranking();
+      Serial.println(F("Set to cranking"));
       ShowSettings();
       CurrentMenuLevel = MENU_TOP_LEVEL;
       ShowMenu();
@@ -383,13 +407,19 @@ void Menu_Process
 
     if (InChar != CHAR_LF)
     {
-      // if enter pressed then process input
+      // if number entered then store it
       if (InChar >= '0')
       {
         // store in buffer
         InputBuffer[InputBufferIdx++] = InChar;
         if (InputBufferIdx == MAX_INPUTBUFFER_SIZE - 1) InputBufferIdx = 0;
       }
+      // if backspace pressed then delete last char
+      else if (InChar == CHAR_BS)
+      {
+        if (InputBufferIdx > 0) InputBufferIdx--;
+      }
+      // anything else entered
       else
       {
         Serial.flush();
