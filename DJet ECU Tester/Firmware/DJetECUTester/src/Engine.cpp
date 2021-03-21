@@ -7,6 +7,72 @@
 // special value to indicate no manifold pressure required
 #define NO_PRESSURE -1
 
+// default air temperature at start of simulation
+#define DEFAULT_AIRTEMPF 72
+
+// pins
+#define PIN_STATUS_LED    A3  // PC3
+#define PIN_START         7   // PD7
+#define PIN_TRIGGERGROUP1 9   // PB1
+#define PIN_TRIGGERGROUP2 5   // PD5
+#define PIN_TRIGGERGROUP3 6   // PD6
+#define PIN_TRIGGERGROUP4 3   // PD3
+#define PIN_TPSWOT        8   // PB0
+#define PIN_TPSIDLE       A0  // PC0
+#define PIN_TPSACCEL1     A2  // PC2
+#define PIN_TPSACCEL2     A1  // PC1
+#define PIN_VAC1          4   // PD4
+#define PIN_VAC2          2   // PD2
+#define PIN_AIRTEMPCS     A5  // PC5
+#define PIN_COOLANTTEMPCS A4  // PC4
+
+// IO macros
+#define STATUS_LED_ON          digitalWrite(PIN_STATUS_LED, LOW)
+#define STATUS_LED_OFF         digitalWrite(PIN_STATUS_LED, HIGH);
+#define IS_STATUS_LED_ON       (digitalRead(PIN_STATUS_LED) == 1 ? FALSE : TRUE)
+
+#define STARTING               digitalWrite(PIN_START, HIGH);
+#define NOTSTARTING            digitalWrite(PIN_START, LOW);
+
+#define AIRTEMPCS_ASSERT       digitalWrite(PIN_AIRTEMPCS, LOW);
+#define AIRTEMPCS_DEASSERT     digitalWrite(PIN_AIRTEMPCS, HIGH);
+
+#define COOLANTTEMPCS_ASSERT   digitalWrite(PIN_COOLANTTEMPCS, LOW);
+#define COOLANTTEMPCS_DEASSERT digitalWrite(PIN_COOLANTTEMPCS, HIGH);
+
+#define TPS_WOT                digitalWrite(PIN_TPSWOT, HIGH);
+#define TPS_NOTWOT             digitalWrite(PIN_TPSWOT, LOW);
+
+#define TPS_IDLE               digitalWrite(PIN_TPSIDLE, HIGH);
+#define TPS_NOTIDLE            digitalWrite(PIN_TPSIDLE, LOW);
+
+#define TPS_WOT                digitalWrite(PIN_TPSWOT, HIGH);
+#define TPS_NOTWOT             digitalWrite(PIN_TPSWOT, LOW);
+
+#define TPS_ACCEL1_ASSERT      digitalWrite(PIN_TPSACCEL1, HIGH);
+#define TPS_ACCEL1_DEASSERT    digitalWrite(PIN_TPSACCEL1, LOW);
+
+#define TPS_ACCEL2_ASSERT      digitalWrite(PIN_TPSACCEL2, HIGH);
+#define TPS_ACCEL2_DEASSERT    digitalWrite(PIN_TPSACCEL2, LOW);
+
+#define TPS_VAC1_ASSERT        digitalWrite(PIN_VAC1, HIGH);
+#define TPS_VAC1_DEASSERT      digitalWrite(PIN_VAC1, LOW);
+
+#define TPS_VAC2_ASSERT        digitalWrite(PIN_VAC2, HIGH);
+#define TPS_VAC2_DEASSERT      digitalWrite(PIN_VAC2, LOW);
+
+#define ASSERT   1
+#define DEASSERT 0
+
+// defines an acceleration enrichment state
+typedef struct _enrichment
+{
+  int ThrottleLow;                                         // % x10
+  int ThrottleHigh;                                        // % x10
+  int Accel1State;
+  int Accel2State;
+} enrichment_t;
+
 static int EngineSpeed;                                    // RPM
 static int AirTempF;
 static int CoolantTempF;
@@ -14,6 +80,83 @@ static int ThrottlePosition;                               // %
 static throttledirection_t ThrottleDirection;
 static int Pressure;                                       // manifold, inHg
 static bool Cranking;
+static enrichment_t Enrichment[] = {
+  // thr low, thr high, accel1, accel2
+  {0,   23,   DEASSERT, ASSERT},    // accel 2 finger 1
+  {24,  46,   DEASSERT, DEASSERT},
+  {47,  69,   ASSERT,   DEASSERT},  // accel 1 finger 1
+  {70,  92,   DEASSERT, DEASSERT},
+  {93,  115,  DEASSERT, ASSERT},    // accel 2 finger 2
+  {116, 138,  DEASSERT, DEASSERT},
+  {139, 162,  ASSERT,   DEASSERT},  // 2
+  {163, 185,  DEASSERT, DEASSERT},  // start of typical cruise area
+  {186, 208,  DEASSERT, ASSERT},    // 3
+  {209, 231,  DEASSERT, DEASSERT},
+  {232, 254,  ASSERT,   DEASSERT},  // 3, end of typical cruise area
+  {255, 277,  DEASSERT, DEASSERT},
+  {256, 300,  DEASSERT, ASSERT},    // 4
+  {301, 323,  DEASSERT, DEASSERT},
+  {324, 346,  ASSERT,   DEASSERT},  // 4
+  {347, 369,  DEASSERT, DEASSERT},
+  {370, 392,  DEASSERT, ASSERT},    // 5
+  {393, 415,  DEASSERT, DEASSERT},
+  {416, 438,  ASSERT,   DEASSERT},  // 5
+  {439, 462,  DEASSERT, DEASSERT},
+  {463, 485,  DEASSERT, ASSERT},    // 6
+  {486, 508,  DEASSERT, DEASSERT},
+  {509, 531,  ASSERT,   DEASSERT},  // 6
+  {532, 554,  DEASSERT, DEASSERT},
+  {555, 577,  DEASSERT, ASSERT},    // 7
+  {578, 600,  DEASSERT, DEASSERT},
+  {601, 623,  ASSERT,   DEASSERT},  // 7
+  {624, 646,  DEASSERT, DEASSERT},
+  {647, 669,  DEASSERT, ASSERT},    // 8
+  {670, 692,  DEASSERT, DEASSERT},
+  {693, 715,  ASSERT,   DEASSERT},  // 8
+  {716, 738,  DEASSERT, DEASSERT},
+  {739, 762,  DEASSERT, ASSERT},    // 9
+  {763, 785,  DEASSERT, DEASSERT},
+  {786, 808,  ASSERT,   DEASSERT},  // 9
+  {809, 831,  DEASSERT, DEASSERT},
+  {832, 854,  DEASSERT, ASSERT},    // 10
+  {855, 877,  DEASSERT, DEASSERT},
+  {878, 900,  ASSERT,   DEASSERT},  // 10
+  {901, 1000, ASSERT,   DEASSERT}
+};
+
+// Gets the current time in milliseconds since last power on
+static unsigned long GetTime
+  (
+  void
+  )
+{
+  return millis();
+}
+
+// Checks if a timestamp is in the past, handles 32-bit timer overflow
+static uint8_t IsTimeExpired
+  (
+  unsigned long timestamp            // timestamp to check
+  )
+{
+  unsigned long time_now;
+
+  time_now = millis();
+  if (time_now >= timestamp)
+  {
+    if ((time_now - timestamp) < 0x80000000)
+      return 1;
+    else
+      return 0;
+  }
+  else
+  {
+    if ((timestamp - time_now) >= 0x80000000)
+      return 1;
+    else
+      return 0;
+  }
+}
 
 // set new engine parameters
 void Engine_Set
@@ -90,6 +233,71 @@ void Engine_SetThrottle
 {
   ThrottlePosition = NewThrottlePosition;
   ThrottleDirection = NewThrottleDirection;
+
+  // https://www.sw-em.com/bosch_d-jetronic_injection.htm#reference_information_tps
+
+  // idle switch
+  if (ThrottlePosition <= 2)
+  {
+    TPS_IDLE;
+  }
+  else
+  {
+    TPS_NOTIDLE;
+  }
+
+  // wide open throttle switch
+  if (ThrottlePosition >= 90)
+  {
+    TPS_WOT;
+  }
+  else
+  {
+    TPS_NOTWOT;
+  }
+
+  // enrichment pulses
+  if ((ThrottleDirection == THROTTLE_ACCELERATING) || (ThrottleDirection == THROTTLE_NONE))
+  {
+    // adjust throttle position for calculation, avoids the need for floating point
+    int T10 = ThrottlePosition * 10;
+    if (T10 < 0)    T10 = 0;
+    if (T10 > 1000) T10 = 1000;
+
+    // search for current enrichment setting
+    int NumEnrichmentPos = sizeof(Enrichment) / sizeof(enrichment_t);
+    for (int e = 0; e < NumEnrichmentPos; e++)
+    {
+      if ((T10 >= Enrichment[e].ThrottleLow) && (T10 <= Enrichment[e].ThrottleHigh))
+      {
+        if (Enrichment[e].Accel1State == ASSERT)
+        {
+          TPS_ACCEL1_ASSERT;
+        }
+        else
+        {
+          TPS_ACCEL1_DEASSERT;
+        }
+
+        if (Enrichment[e].Accel2State == ASSERT)
+        {
+          TPS_ACCEL2_ASSERT;
+        }
+        else
+        {
+          TPS_ACCEL2_DEASSERT;
+        }
+
+        break;
+      }
+    }
+  }
+  else
+  {
+    // no pulses when decelerating
+    TPS_ACCEL1_DEASSERT;
+    TPS_ACCEL2_DEASSERT;
+  }
 }
 
 // sets the new pressure level from the manifold
@@ -98,14 +306,18 @@ void Engine_SetManifoldPressure
   int NewPressure                                          // new pressure level in inHg
   )
 {
-  Pressure = NewPressure;
-
-  if (Pressure != NO_PRESSURE)
+  if (NewPressure != NO_PRESSURE)
   {
-    Serial.print(F("ACTION: MANUALLT SET PRESSURE TO "));
-    Serial.print(Pressure);
+    Serial.print(F("ACTION: MANUALLY SET PRESSURE TO "));
+    Serial.print(NewPressure);
     Serial.println(F(" INHG"));
   }
+  else if (NewPressure != Pressure)
+  {
+    Serial.println(F("ACTION: RELEASE ALL PRESSURE"));
+  }
+
+   Pressure = NewPressure;
 }
 
 // sets the cranking state
@@ -115,6 +327,15 @@ extern void Engine_SetCranking
   )
 {
   Cranking = NewCranking;
+
+  if (Cranking)
+  {
+    STARTING;
+  }
+  else
+  {
+    NOTSTARTING;
+  }
 }
 
 // sets the engine to cold idle state
@@ -123,7 +344,7 @@ void Engine_ColdIdle
   void  
   )
 {
-  Engine_Set(1200, 72, 0, THROTTLE_NONE, 15, false);
+  Engine_Set(1200, DEFAULT_AIRTEMPF, 0, THROTTLE_NONE, 15, false);
 }
 
 // sets the engine to hot idle state
@@ -141,8 +362,8 @@ void Engine_Cruise30MPH
   void  
   )
 {
-  // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
+
+  Engine_Set(1500, 185, 170, THROTTLE_ACCELERATING, 11, false);
 }
 
 // sets the engine to cruising at 70 MPH
@@ -151,8 +372,7 @@ void Engine_Cruise70MPH
   void  
   )
 {
-  // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
+  Engine_Set(3000, 185, 250, THROTTLE_ACCELERATING, 11, false);
 }
 
 // sets the engine to gentle acceleration
@@ -161,8 +381,7 @@ void Engine_GentleAcceleration
   void  
   )
 {
-  // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
+  Engine_Set(1800, 185, 300, THROTTLE_ACCELERATING, 9, false);
 }
 
 // sets the engine to moderate acceleration
@@ -172,7 +391,7 @@ void Engine_ModerateAcceleration
   )
 {
   // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
+  Engine_Set(3500, 185, 500, THROTTLE_ACCELERATING, 7, false);
 }
 
 // sets the engine to hard acceleration
@@ -181,8 +400,7 @@ void Engine_HardAcceleration
   void  
   )
 {
-  // fixme = to do
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
+  Engine_Set(6000, 185, 950, THROTTLE_ACCELERATING, 2, false);
 }
 
 // turns the engine off
@@ -191,7 +409,7 @@ void Engine_Off
   void  
   )
 {
-  Engine_Set(0, 0, 0, THROTTLE_NONE, NO_PRESSURE, false);
+  Engine_Set(0, DEFAULT_AIRTEMPF, 0, THROTTLE_NONE, NO_PRESSURE, false);
 }
 
 // sets the engine to cranking
@@ -200,7 +418,7 @@ void Engine_Cranking
   void  
   )
 {
-  Engine_Set(0, 0, 0, THROTTLE_NONE, NO_PRESSURE, true);
+  Engine_Set(0, DEFAULT_AIRTEMPF, 0, THROTTLE_NONE, NO_PRESSURE, true);
 }
 
 // initializes engine simulation
@@ -209,9 +427,10 @@ void Engine_Init
    void
    )
 {
-  Engine_Off();
+  STATUS_LED_OFF;
 
-  AirTempF = 72;
+  Engine_Off();
+  Engine_SetAirTempF(DEFAULT_AIRTEMPF);
 }
 
 // call repeatedly to implement the engine simulation
