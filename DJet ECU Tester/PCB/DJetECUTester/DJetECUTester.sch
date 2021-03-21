@@ -5,7 +5,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 7
 Title "D-Jetronic ECU Tester"
-Date "2021-03-15"
+Date "2021-03-20"
 Rev "1.0"
 Comp "(C) Britishideas 2021"
 Comment1 ""
@@ -1021,9 +1021,9 @@ Wire Wire Line
 Wire Wire Line
 	8250 2450 7400 2450
 Text Label 8750 5450 0    50   ~ 0
-ECU_COLDSTARTRELAY
+ECU_START
 Text Label 8850 3050 0    50   ~ 0
-ECU_COLDSTARTRELAY
+ECU_START
 Wire Wire Line
 	8750 3050 8850 3050
 Wire Wire Line
@@ -1126,26 +1126,18 @@ Text Label 8750 1600 1    50   ~ 0
 ECU_INJGROUP3
 Text Label 9200 1600 1    50   ~ 0
 ECU_INJGROUP4
-$Sheet
-S 1500 3850 900  300 
-U 60469920
-F0 "CSV" 50
-F1 "CSV.sch" 50
-F2 "ECU_CSV" O R 2400 3950 50 
-F3 "CSV" I L 1500 3950 50 
-$EndSheet
 Text Label 2500 3950 0    50   ~ 0
-ECU_COLDSTARTRELAY
+ECU_START
 Wire Wire Line
 	2400 3950 2500 3950
 Wire Wire Line
 	1500 3950 800  3950
 Text Label 800  3950 0    50   ~ 0
-CSV
+START
 Wire Wire Line
 	4550 2600 4750 2600
 Text Label 4750 2600 0    50   ~ 0
-CSV
+START
 $Comp
 L Device:Crystal_GND24 Y1
 U 1 1 605627C0
@@ -1249,4 +1241,12 @@ Wire Wire Line
 Connection ~ 5300 7050
 Wire Wire Line
 	5300 7050 5300 6850
+$Sheet
+S 1500 3850 900  300 
+U 60469920
+F0 "Start" 50
+F1 "Start.sch" 50
+F2 "ECU_START" O R 2400 3950 50 
+F3 "START" I L 1500 3950 50 
+$EndSheet
 $EndSCHEMATC

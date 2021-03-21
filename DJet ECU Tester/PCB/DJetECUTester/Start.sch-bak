@@ -5,7 +5,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 7 7
 Title "D-Jetronic ECU Tester"
-Date "2021-03-12"
+Date "2021-03-15"
 Rev "1.0"
 Comp "(C) Britishideas 2021"
 Comment1 ""
@@ -14,9 +14,9 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 Text HLabel 6950 4150 2    50   Output ~ 0
-ECU_CSV
+ECU_START
 Text HLabel 4450 4100 0    50   Input ~ 0
-CSV
+START
 $Comp
 L Device:R R?
 U 1 1 60493C1A
