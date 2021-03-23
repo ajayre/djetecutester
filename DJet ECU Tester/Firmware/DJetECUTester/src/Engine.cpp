@@ -6,6 +6,7 @@
 #include "AirTempSensor.h"
 #include "CoolantTempSensor.h"
 #include "arduino-mcp4xxx-master/mcp4xxx.h"
+#include "TimerOne-master/TimerOne.h"
 
 using namespace icecave::arduino;
 
@@ -59,6 +60,15 @@ using namespace icecave::arduino;
 
 #define VAC2_ASSERT            digitalWrite(PIN_VAC2, HIGH);
 #define VAC2_DEASSERT          digitalWrite(PIN_VAC2, LOW);
+
+#define TRIGGERGROUP1_HIGH     digitalWrite(PIN_TRIGGERGROUP1, LOW);
+#define TRIGGERGROUP1_LOW      digitalWrite(PIN_TRIGGERGROUP1, HIGH);
+#define TRIGGERGROUP2_HIGH     digitalWrite(PIN_TRIGGERGROUP2, LOW);
+#define TRIGGERGROUP2_LOW      digitalWrite(PIN_TRIGGERGROUP2, HIGH);
+#define TRIGGERGROUP3_HIGH     digitalWrite(PIN_TRIGGERGROUP3, LOW);
+#define TRIGGERGROUP3_LOW      digitalWrite(PIN_TRIGGERGROUP3, HIGH);
+#define TRIGGERGROUP4_HIGH     digitalWrite(PIN_TRIGGERGROUP4, LOW);
+#define TRIGGERGROUP4_LOW      digitalWrite(PIN_TRIGGERGROUP4, HIGH);
 
 #define ASSERT   1
 #define DEASSERT 0
@@ -167,6 +177,21 @@ static uint8_t IsTimeExpired
   }
 }
 
+// interrupt that handles the pulse generation
+static void PulseGenerator_Handler
+  (
+  void  
+  )
+{
+  Timer1.stop();
+
+  // fixme - to do - toggle output
+
+  // restart
+  Timer1.setPeriod(400000);
+  Timer1.restart();
+}
+
 // set new engine parameters
 void Engine_Set
   (
@@ -212,7 +237,24 @@ void Engine_SetEngineSpeed
   int NewSpeed                                             // new speed in RPM
   )
 {
+  // stop pulse generation
+  Timer1.stop();
+  TRIGGERGROUP1_HIGH;
+  TRIGGERGROUP2_HIGH;
+  TRIGGERGROUP3_HIGH;
+  TRIGGERGROUP4_HIGH;
+
   EngineSpeed = NewSpeed;
+
+  if (EngineSpeed > 0)
+  {
+    // fixme - to do - regenerate table
+
+    // restart pulse generation
+    // fixme - to do
+    Timer1.setPeriod(500000);
+    Timer1.start();
+  }
 }
 
 // sets the air temperature
@@ -454,8 +496,17 @@ void Engine_Init
   AirTempSensor_Init();
   CoolantTempSensor_Init();
 
-  AirTempPot = new MCP4XXX(PIN_AIRTEMPCS);
+  AirTempPot     = new MCP4XXX(PIN_AIRTEMPCS);
   CoolantTempPot = new MCP4XXX(PIN_COOLANTTEMPCS);
+
+  // set up pulse generator
+  Timer1.initialize(0);
+  Timer1.attachInterrupt(PulseGenerator_Handler);
+  Timer1.stop();
+  TRIGGERGROUP1_HIGH;
+  TRIGGERGROUP2_HIGH;
+  TRIGGERGROUP3_HIGH;
+  TRIGGERGROUP4_HIGH;
 
   STATUS_LED_OFF;
 
