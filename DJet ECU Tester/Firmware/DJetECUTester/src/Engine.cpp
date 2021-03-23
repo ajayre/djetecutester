@@ -5,6 +5,9 @@
 #include "Engine.h"
 #include "AirTempSensor.h"
 #include "CoolantTempSensor.h"
+#include "arduino-mcp4xxx-master/mcp4xxx.h"
+
+using namespace icecave::arduino;
 
 // special value to indicate no manifold pressure required
 #define NO_PRESSURE -1
@@ -35,12 +38,6 @@
 
 #define STARTING               digitalWrite(PIN_START, HIGH);
 #define NOTSTARTING            digitalWrite(PIN_START, LOW);
-
-#define AIRTEMPCS_ASSERT       digitalWrite(PIN_AIRTEMPCS, LOW);
-#define AIRTEMPCS_DEASSERT     digitalWrite(PIN_AIRTEMPCS, HIGH);
-
-#define COOLANTTEMPCS_ASSERT   digitalWrite(PIN_COOLANTTEMPCS, LOW);
-#define COOLANTTEMPCS_DEASSERT digitalWrite(PIN_COOLANTTEMPCS, HIGH);
 
 #define TPS_WOT                digitalWrite(PIN_TPSWOT, HIGH);
 #define TPS_NOTWOT             digitalWrite(PIN_TPSWOT, LOW);
@@ -82,6 +79,9 @@ static int ThrottlePosition;                               // %
 static throttledirection_t ThrottleDirection;
 static int Pressure;                                       // manifold, inHg
 static bool Cranking;
+// source: https://github.com/jmalloc/arduino-mcp4xxx
+static MCP4XXX *AirTempPot;
+static MCP4XXX *CoolantTempPot;
 
 // this table represents the fingers inside the throttle
 // position sensor. As the throttle is increased the
@@ -227,11 +227,8 @@ void Engine_SetAirTempF
 
     int R = AirTempSensor_GetResistance(AirTempF);
 
-    AIRTEMPCS_ASSERT;
-
     // fixme - to do - spi write
-
-    AIRTEMPCS_DEASSERT;
+    AirTempPot->set(0);
   }
 }
 
@@ -247,11 +244,8 @@ void Engine_SetCoolantTempF
 
     int R = CoolantTempSensor_GetResistance(CoolantTempF);
 
-    COOLANTTEMPCS_ASSERT;
-
     // fixme - to do - spi write
-
-    COOLANTTEMPCS_DEASSERT;
+    CoolantTempPot->set(0);
   }
 }
 
@@ -459,6 +453,9 @@ void Engine_Init
 {
   AirTempSensor_Init();
   CoolantTempSensor_Init();
+
+  AirTempPot = new MCP4XXX(PIN_AIRTEMPCS);
+  CoolantTempPot = new MCP4XXX(PIN_COOLANTTEMPCS);
 
   STATUS_LED_OFF;
 
