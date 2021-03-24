@@ -4,6 +4,10 @@
 #ifndef _ENGINEH_
 #define _ENGINEH_
 
+// pulse angle limits
+#define MIN_PULSEANGLE 120
+#define MAX_PULSEANGLE 175
+
 typedef enum _throttledirection
 {
   THROTTLE_NONE,
@@ -22,6 +26,12 @@ extern void Engine_Init
 extern void Engine_Process
   (
   void
+  );
+
+// sets the pulse generator pulse angle in degrees of distributor rotation
+extern void Engine_SetPulseAngle
+  (
+  int NewPulseAngle                                        // degrees of rotation
   );
 
 // sets the engine speed
@@ -81,7 +91,8 @@ extern void Engine_Get
   throttledirection_t *pThrottleDirection,                 // throttle direction
   int *pPressure,                                          // manifold pressure
   int *pAirTempF,                                          // air temperature
-  bool *pCranking                                          // cranking state
+  bool *pCranking,                                         // cranking state
+  int *pPulseAngle                                         // pulse angle for pulse generator in degrees
   );
 
 // turns the engine off

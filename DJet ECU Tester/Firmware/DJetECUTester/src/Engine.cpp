@@ -16,6 +16,9 @@ using namespace icecave::arduino;
 // default air temperature at start of simulation
 #define DEFAULT_AIRTEMPF 72
 
+// default pulse generator pulse angle in degrees of distributor rotation
+#define DEFAULT_PULSEANGLE 135
+
 // pins
 #define PIN_STATUS_LED    A3  // PC3
 #define PIN_START         7   // PD7
@@ -46,9 +49,6 @@ using namespace icecave::arduino;
 #define TPS_IDLE               digitalWrite(PIN_TPSIDLE, HIGH);
 #define TPS_NOTIDLE            digitalWrite(PIN_TPSIDLE, LOW);
 
-#define TPS_WOT                digitalWrite(PIN_TPSWOT, HIGH);
-#define TPS_NOTWOT             digitalWrite(PIN_TPSWOT, LOW);
-
 #define TPS_ACCEL1_ASSERT      digitalWrite(PIN_TPSACCEL1, HIGH);
 #define TPS_ACCEL1_DEASSERT    digitalWrite(PIN_TPSACCEL1, LOW);
 
@@ -60,6 +60,9 @@ using namespace icecave::arduino;
 
 #define VAC2_ASSERT            digitalWrite(PIN_VAC2, HIGH);
 #define VAC2_DEASSERT          digitalWrite(PIN_VAC2, LOW);
+
+#define AIRTEMPCS_DEASSERT     digitalWrite(PIN_AIRTEMPCS, HIGH);
+#define COOLANTTEMPCS_DEASSERT digitalWrite(PIN_COOLANTTEMPCS, HIGH);
 
 #define TRIGGERGROUP1_HIGH     digitalWrite(PIN_TRIGGERGROUP1, LOW);
 #define TRIGGERGROUP1_LOW      digitalWrite(PIN_TRIGGERGROUP1, HIGH);
@@ -73,6 +76,9 @@ using namespace icecave::arduino;
 #define ASSERT   1
 #define DEASSERT 0
 
+// number of pulse generator triggers = number of injector groups x 2
+#define NUM_PULSEGENERATOR_TRIGGERS 8
+
 // defines an acceleration enrichment state
 typedef struct _enrichment
 {
@@ -81,6 +87,16 @@ typedef struct _enrichment
   int Accel1State;
   int Accel2State;
 } enrichment_t;
+
+// pulse generator trigger states for state machine
+typedef enum _triggerstates { G1START, G1END, G2START, G2END, G3START, G3END, G4START, G4END } triggerstates_t;
+
+// defines a single pulse generator trigger state
+typedef struct _trigger
+{
+  triggerstates_t State;                                   // type of edge to generate
+  unsigned short Match;                                    // time since last trigger in microseconds
+} trigger_t;
 
 static int EngineSpeed;                                    // RPM
 static int AirTempF;
@@ -92,6 +108,9 @@ static bool Cranking;
 // source: https://github.com/jmalloc/arduino-mcp4xxx
 static MCP4XXX *AirTempPot;
 static MCP4XXX *CoolantTempPot;
+static trigger_t Triggers[NUM_PULSEGENERATOR_TRIGGERS];
+static int PulseAngle;
+static int CurrentTrigger;
 
 // this table represents the fingers inside the throttle
 // position sensor. As the throttle is increased the
@@ -185,11 +204,75 @@ static void PulseGenerator_Handler
 {
   Timer1.stop();
 
-  // fixme - to do - toggle output
+  // toggle edge for this trigger
+  switch (Triggers[CurrentTrigger].State)
+  {
+    case G1START: TRIGGERGROUP1_LOW;  break;
+    case G1END:   TRIGGERGROUP1_HIGH; break;
+    case G2START: TRIGGERGROUP2_LOW;  break;
+    case G2END:   TRIGGERGROUP2_HIGH; break;
+    case G3START: TRIGGERGROUP3_LOW;  break;
+    case G3END:   TRIGGERGROUP3_HIGH; break;
+    case G4START: TRIGGERGROUP4_LOW;  break;
+    case G4END:   TRIGGERGROUP4_HIGH; break;
+  }
+
+  // go to next trigger
+  if (++CurrentTrigger == NUM_PULSEGENERATOR_TRIGGERS) CurrentTrigger = 0;
 
   // restart
-  Timer1.setPeriod(400000);
+  Timer1.setPeriod(Triggers[CurrentTrigger].Match);
   Timer1.restart();
+}
+
+// updates the triggers for the pulse generator waveforms
+// based on a specific engine speed and pulse angle
+static void UpdatePulseGeneratorTriggers
+  (
+  int EngineSpeed,                                         // RPM
+  int PulseAngle                                           // degrees of distributor rotation
+  )
+{
+  float RotationsPerSec = EngineSpeed / 60.0F;
+  float FiringCyclesPerSec = RotationsPerSec / 2;
+  float FiringPeriod = 1 / FiringCyclesPerSec * 1000.0F;
+
+  float DutyCycle = PulseAngle * 2.0F / 720.0F;
+  float PulseLength = FiringPeriod * DutyCycle;
+
+  // get group starts, 90 degrees out of phase
+  float Group1Start = 0.0F;
+  float Group2Start = FiringPeriod * 0.25F;
+  float Group3Start = FiringPeriod * 0.5F;
+  float Group4Start = FiringPeriod * 0.75F;
+
+  float Group1End = Group1Start + PulseLength;
+  if (Group1End > FiringPeriod) Group1End -= FiringPeriod;
+  float Group2End = Group2Start + PulseLength;
+  if (Group2End > FiringPeriod) Group2End -= FiringPeriod;
+  float Group3End = Group3Start + PulseLength;
+  if (Group3End > FiringPeriod) Group3End -= FiringPeriod;
+  float Group4End = Group4Start + PulseLength;
+  if (Group4End > FiringPeriod) Group4End -= FiringPeriod;
+
+  // set up table of triggers
+  // each trigger has a state and a relative time in microseconds
+  Triggers[0].State = G1START;
+  Triggers[0].Match = (int)((FiringPeriod - Group3End) * 1000.0);
+  Triggers[1].State = G4END;
+  Triggers[1].Match = (int)((Group4End - Group1Start) * 1000.0);
+  Triggers[2].State = G2START;
+  Triggers[2].Match = (int)((Group2Start - Group4End) * 1000.0);
+  Triggers[3].State = G1END;
+  Triggers[3].Match = (int)((Group1End - Group2Start) * 1000.0);
+  Triggers[4].State = G3START;
+  Triggers[4].Match = (int)((Group3Start - Group1End) * 1000.0);
+  Triggers[5].State = G2END;
+  Triggers[5].Match = (int)((Group2End - Group3Start) * 1000.0);
+  Triggers[6].State = G4START;
+  Triggers[6].Match = (int)((Group4Start - Group2End) * 1000.0);
+  Triggers[7].State = G3END;
+  Triggers[7].Match = (int)((Group3End - Group4Start) * 1000.0);
 }
 
 // set new engine parameters
@@ -219,16 +302,32 @@ void Engine_Get
   throttledirection_t *pThrottleDirection,                 // throttle direction
   int *pPressure,                                          // manifold pressure
   int *pAirTempF,                                          // air temperature
-  bool *pCranking                                          // cranking state
+  bool *pCranking,                                         // cranking state
+  int *pPulseAngle                                         // pulse angle for pulse generator in degrees
   )
 {
-  *pEngineSpeed = EngineSpeed;
-  *pCoolantTempF = CoolantTempF;
-  *pThrottlePosition = ThrottlePosition;
+  *pEngineSpeed       = EngineSpeed;
+  *pCoolantTempF      = CoolantTempF;
+  *pThrottlePosition  = ThrottlePosition;
   *pThrottleDirection = ThrottleDirection;
-  *pPressure = Pressure;
-  *pAirTempF = AirTempF;
-  *pCranking = Cranking;
+  *pPressure          = Pressure;
+  *pAirTempF          = AirTempF;
+  *pCranking          = Cranking;
+  *pPulseAngle        = PulseAngle;
+}
+
+// sets the pulse generator pulse angle in degrees of distributor rotation
+void Engine_SetPulseAngle
+  (
+  int NewPulseAngle                                        // degrees of rotation
+  )
+{
+  PulseAngle = NewPulseAngle;
+  if (PulseAngle < MIN_PULSEANGLE) PulseAngle = MIN_PULSEANGLE;
+  if (PulseAngle > MAX_PULSEANGLE) PulseAngle = MAX_PULSEANGLE;
+
+  // update calculations for pulse generation
+  Engine_SetEngineSpeed(EngineSpeed);
 }
 
 // sets the engine speed
@@ -248,11 +347,13 @@ void Engine_SetEngineSpeed
 
   if (EngineSpeed > 0)
   {
-    // fixme - to do - regenerate table
+    UpdatePulseGeneratorTriggers(EngineSpeed, PulseAngle);
+
+    // go to start of table
+    CurrentTrigger = 0;
 
     // restart pulse generation
-    // fixme - to do
-    Timer1.setPeriod(500000);
+    Timer1.setPeriod(Triggers[0].Match);
     Timer1.start();
   }
 }
@@ -493,6 +594,36 @@ void Engine_Init
    void
    )
 {
+  // set up outputs
+  pinMode(PIN_STATUS_LED,    OUTPUT);
+  STATUS_LED_OFF;
+  pinMode(PIN_START,         OUTPUT);
+  NOTSTARTING;
+  pinMode(PIN_TRIGGERGROUP1, OUTPUT);
+  TRIGGERGROUP1_HIGH;
+  pinMode(PIN_TRIGGERGROUP2, OUTPUT);
+  TRIGGERGROUP2_HIGH;
+  pinMode(PIN_TRIGGERGROUP3, OUTPUT);
+  TRIGGERGROUP3_HIGH;
+  pinMode(PIN_TRIGGERGROUP4, OUTPUT);
+  TRIGGERGROUP4_HIGH;
+  pinMode(PIN_TPSWOT,        OUTPUT);
+  TPS_NOTWOT;
+  pinMode(PIN_TPSIDLE,       OUTPUT);
+  TPS_NOTIDLE;
+  pinMode(PIN_TPSACCEL1,     OUTPUT);
+  TPS_ACCEL1_DEASSERT;
+  pinMode(PIN_TPSACCEL2,     OUTPUT);
+  TPS_ACCEL2_DEASSERT;
+  pinMode(PIN_VAC1,          OUTPUT);
+  VAC1_DEASSERT;
+  pinMode(PIN_VAC2,          OUTPUT);
+  VAC2_DEASSERT;
+  pinMode(PIN_AIRTEMPCS,     OUTPUT);
+  AIRTEMPCS_DEASSERT;
+  pinMode(PIN_COOLANTTEMPCS, OUTPUT);
+  COOLANTTEMPCS_DEASSERT;
+
   AirTempSensor_Init();
   CoolantTempSensor_Init();
 
@@ -503,12 +634,8 @@ void Engine_Init
   Timer1.initialize(0);
   Timer1.attachInterrupt(PulseGenerator_Handler);
   Timer1.stop();
-  TRIGGERGROUP1_HIGH;
-  TRIGGERGROUP2_HIGH;
-  TRIGGERGROUP3_HIGH;
-  TRIGGERGROUP4_HIGH;
 
-  STATUS_LED_OFF;
+  PulseAngle = DEFAULT_PULSEANGLE;
 
   Engine_Off();
   Engine_SetAirTempF(DEFAULT_AIRTEMPF);

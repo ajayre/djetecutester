@@ -30,6 +30,7 @@
 #define MENU_SET_AIR_TEMP     12
 #define MENU_SET_ENGINE_SPEED 13
 #define MENU_SET_THROTTLE     14
+#define MENU_SET_PULSE_ANGLE  15
 #define MENU_SET_THROTTLE2    100
 
 // limits
@@ -86,6 +87,7 @@ static void ShowMenu
       Serial.println(F("  12. Set air temp"));
       Serial.println(F("  13. Set engine speed"));
       Serial.println(F("  14. Set throttle"));
+      Serial.println(F("  15. Set pulse angle for pulse generator"));
       Serial.println();
       Serial.println(F("Enter a number and press Enter:"));
       break;
@@ -122,6 +124,14 @@ static void ShowMenu
       Serial.print(F("):"));
       break;
 
+    case MENU_SET_PULSE_ANGLE:
+      Serial.print(F("Enter new pulse angle in degrees ("));
+      Serial.print(MIN_PULSEANGLE);
+      Serial.print(F("-"));
+      Serial.print(MAX_PULSEANGLE);
+      Serial.print(F("):"));
+      break;
+
     case MENU_SET_THROTTLE2:
       Serial.print(F("Enter new throttle direction (U or D):"));
       break;
@@ -144,7 +154,8 @@ static void ShowSettings
   int Pressure;
   int AirTempF;
   bool Cranking;
-  Engine_Get(&EngineSpeed, &CoolantTempF, &ThrottlePosition, &ThrottleDirection, &Pressure, &AirTempF, &Cranking);
+  int PulseAngle;
+  Engine_Get(&EngineSpeed, &CoolantTempF, &ThrottlePosition, &ThrottleDirection, &Pressure, &AirTempF, &Cranking, &PulseAngle);
 
   Serial.print(F("Settings: airtemp="));
   Serial.print(AirTempF);
@@ -163,7 +174,9 @@ static void ShowSettings
   Serial.print(F(", engspeed="));
   Serial.print(EngineSpeed);
   Serial.print(F(", cranking="));
-  Serial.println(Cranking ? F("yes") : F("no"));
+  Serial.print(Cranking ? F("yes") : F("no"));
+  Serial.print(F(", pulseangle="));
+  Serial.println(PulseAngle);
 }
 
 // executes a top level menu item
@@ -256,6 +269,7 @@ static void Execute_Top_Level_Menu_Item
     case MENU_SET_AIR_TEMP:
     case MENU_SET_ENGINE_SPEED:
     case MENU_SET_THROTTLE:
+    case MENU_SET_PULSE_ANGLE:
       CurrentMenuLevel = ItemNumber;
       ShowMenu();
       break;
@@ -327,6 +341,26 @@ static void Process_User_Input
         {
           Engine_SetEngineSpeed(EngineSpeed);
           Serial.println(F("Engine speed set"));
+          ShowSettings();
+        }
+        CurrentMenuLevel = MENU_TOP_LEVEL;
+        ShowMenu();
+      }
+      break;
+
+    case MENU_SET_PULSE_ANGLE:
+      {
+        int PulseAngle = atol(Input);
+        if (PulseAngle < MIN_PULSEANGLE || PulseAngle > MAX_PULSEANGLE)
+        {
+          Serial.println();
+          Serial.println();
+          Serial.println(F("ERROR: Entered value is outside of allowed range"));
+        }
+        else
+        {
+          Engine_SetPulseAngle(PulseAngle);
+          Serial.println(F("Pulse angle for pulse generator set"));
           ShowSettings();
         }
         CurrentMenuLevel = MENU_TOP_LEVEL;
