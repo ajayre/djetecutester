@@ -202,8 +202,6 @@ static void PulseGenerator_Handler
   void  
   )
 {
-  Timer1.stop();
-
   // toggle edge for this trigger
   switch (Triggers[CurrentTrigger].State)
   {
@@ -222,7 +220,7 @@ static void PulseGenerator_Handler
 
   // restart
   Timer1.setPeriod(Triggers[CurrentTrigger].Match);
-  Timer1.restart();
+  Timer1.attachInterrupt(PulseGenerator_Handler);
 }
 
 // updates the triggers for the pulse generator waveforms
@@ -480,7 +478,7 @@ void Engine_SetManifoldPressure
     Serial.print(NewPressure);
     Serial.println(F(" INHG"));
   }
-  else if (NewPressure != Pressure)
+  else if (NewPressure == 0)
   {
     Serial.println(F("ACTION: RELEASE ALL PRESSURE"));
   }

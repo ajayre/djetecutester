@@ -87,7 +87,7 @@ static void ShowMenu
       Serial.println(F("  12. Set air temp"));
       Serial.println(F("  13. Set engine speed"));
       Serial.println(F("  14. Set throttle"));
-      Serial.println(F("  15. Set pulse angle for pulse generator"));
+      Serial.println(F("  15. Set pulse generator dwell"));
       Serial.println();
       Serial.println(F("Enter a number and press Enter:"));
       break;
@@ -125,7 +125,7 @@ static void ShowMenu
       break;
 
     case MENU_SET_PULSE_ANGLE:
-      Serial.print(F("Enter new pulse angle in degrees ("));
+      Serial.print(F("Enter new dwell in degrees ("));
       Serial.print(MIN_PULSEANGLE);
       Serial.print(F("-"));
       Serial.print(MAX_PULSEANGLE);
@@ -175,7 +175,7 @@ static void ShowSettings
   Serial.print(EngineSpeed);
   Serial.print(F(", cranking="));
   Serial.print(Cranking ? F("yes") : F("no"));
-  Serial.print(F(", pulseangle="));
+  Serial.print(F(", pulsegendwell="));
   Serial.println(PulseAngle);
 }
 
