@@ -34,10 +34,12 @@
 #define MENU_SET_THROTTLE2    100
 
 // limits
-#define MIN_COOLANT_TEMP      0
-#define MAX_COOLANT_TEMP      250
+// note that temp limits come from the resistance range of the
+// hardware
+#define MIN_COOLANT_TEMP      39
+#define MAX_COOLANT_TEMP      193
 #define MIN_AIR_TEMP          0
-#define MAX_AIR_TEMP          120
+#define MAX_AIR_TEMP          77
 #define MIN_ENGINE_SPEED      500
 #define MAX_ENGINE_SPEED      6500
 #define MIN_THROTTLE_POSITION 0

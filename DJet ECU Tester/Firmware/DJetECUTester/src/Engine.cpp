@@ -35,6 +35,9 @@ using namespace icecave::arduino;
 #define PIN_AIRTEMPCS     A5  // PC5
 #define PIN_COOLANTTEMPCS A4  // PC4
 
+#define FALSE 0
+#define TRUE  1
+
 // IO macros
 #define STATUS_LED_ON          digitalWrite(PIN_STATUS_LED, LOW)
 #define STATUS_LED_OFF         digitalWrite(PIN_STATUS_LED, HIGH);
@@ -79,6 +82,25 @@ using namespace icecave::arduino;
 // number of pulse generator triggers = number of injector groups x 2
 #define NUM_PULSEGENERATOR_TRIGGERS 8
 
+// time between turning the status LED on or off in milliseconds
+#define LED_FLASH_PERIOD 1000
+
+// minimum and maximum resistance in ohms that the hardware can generate
+// these values correspond to a wiper position of 0 -> max_value()-1
+// and were obtained by measurement
+// from the Steinhart-Hart spreadsheets:
+// Air:     4960 Ohms = -46.3F, 248 Ohms = 77.5F
+// Coolant: 4960 Ohms = 39F,    248 Ohms = 193F
+// the corresponding temp ranges must be reflected in MIN_xxx_TEMP and
+// MAX_xxx_TEMP in Menu.cpp
+#define AIRTEMP_MIN_R     248
+#define AIRTEMP_MAX_R     4960
+#define COOLANTTEMP_MIN_R 248
+#define COOLANTTEMP_MAX_R 4960
+
+// number of bits of resolution for digital pot
+#define DIGITAL_POT_RESOLUTION 256
+
 // defines an acceleration enrichment state
 typedef struct _enrichment
 {
@@ -111,6 +133,9 @@ static MCP4XXX *CoolantTempPot;
 static trigger_t Triggers[NUM_PULSEGENERATOR_TRIGGERS];
 static int PulseAngle;
 static int CurrentTrigger;
+static unsigned long LEDTimestamp;
+static float AirRperW;
+static float CoolantRperW;
 
 // this table represents the fingers inside the throttle
 // position sensor. As the throttle is increased the
@@ -367,9 +392,14 @@ void Engine_SetAirTempF
     AirTempF = NewAirTempF;
 
     int R = AirTempSensor_GetResistance(AirTempF);
+    if (R < AIRTEMP_MIN_R) R = AIRTEMP_MIN_R;
+    if (R > AIRTEMP_MAX_R) R = AIRTEMP_MAX_R;
 
-    // fixme - to do - spi write
-    AirTempPot->set(0);
+    int Wiper = (int)(R / AirRperW);
+    if (Wiper > (DIGITAL_POT_RESOLUTION - 1)) Wiper = DIGITAL_POT_RESOLUTION - 1;
+    if (Wiper < 0) Wiper = 0;
+
+    AirTempPot->set(Wiper);
   }
 }
 
@@ -384,9 +414,14 @@ void Engine_SetCoolantTempF
     CoolantTempF = NewCoolantTempF;
 
     int R = CoolantTempSensor_GetResistance(CoolantTempF);
+    if (R < COOLANTTEMP_MIN_R) R = COOLANTTEMP_MIN_R;
+    if (R > COOLANTTEMP_MAX_R) R = COOLANTTEMP_MAX_R;
 
-    // fixme - to do - spi write
-    CoolantTempPot->set(0);
+    int Wiper = (int)(R / CoolantRperW);
+    if (Wiper > (DIGITAL_POT_RESOLUTION - 1)) Wiper = DIGITAL_POT_RESOLUTION - 1;
+    if (Wiper < 0) Wiper = 0;
+
+    CoolantTempPot->set(Wiper);
   }
 }
 
@@ -628,6 +663,10 @@ void Engine_Init
   AirTempPot     = new MCP4XXX(PIN_AIRTEMPCS);
   CoolantTempPot = new MCP4XXX(PIN_COOLANTTEMPCS);
 
+  // calculate ratio of resistance (Ohms) per step in wiper position
+  AirRperW     = (AIRTEMP_MAX_R - AIRTEMP_MIN_R)         / (float)DIGITAL_POT_RESOLUTION;
+  CoolantRperW = (COOLANTTEMP_MAX_R - COOLANTTEMP_MIN_R) / (float)DIGITAL_POT_RESOLUTION;
+
   // set up pulse generator
   Timer1.initialize(0);
   Timer1.attachInterrupt(PulseGenerator_Handler);
@@ -637,6 +676,8 @@ void Engine_Init
 
   Engine_Off();
   Engine_SetAirTempF(DEFAULT_AIRTEMPF);
+
+  LEDTimestamp = GetTime() + LED_FLASH_PERIOD;
 }
 
 // call repeatedly to implement the engine simulation
@@ -645,4 +686,18 @@ void Engine_Process
   void
   )
 {
+  // flash status LED to show we are alive
+  if (IsTimeExpired(LEDTimestamp))
+  {
+    if (IS_STATUS_LED_ON)
+    {
+      STATUS_LED_OFF;
+    }
+    else
+    {
+      STATUS_LED_ON;
+    }
+    
+    LEDTimestamp = GetTime() + LED_FLASH_PERIOD;
+  }
 }
