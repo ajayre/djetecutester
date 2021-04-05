@@ -23,8 +23,8 @@ using namespace icecave::arduino;
 #define PIN_STATUS_LED    A3  // PC3
 #define PIN_START         7   // PD7
 #define PIN_TRIGGERGROUP1 9   // PB1
-#define PIN_TRIGGERGROUP2 5   // PD5
-#define PIN_TRIGGERGROUP3 6   // PD6
+#define PIN_TRIGGERGROUP2 6   // PD6
+#define PIN_TRIGGERGROUP3 5   // PD5
 #define PIN_TRIGGERGROUP4 3   // PD3
 #define PIN_TPSWOT        8   // PB0
 #define PIN_TPSIDLE       A0  // PC0
@@ -85,6 +85,11 @@ using namespace icecave::arduino;
 // time between turning the status LED on or off in milliseconds
 #define LED_FLASH_PERIOD 1000
 
+// resistance of wiper
+// obtained by trial and error
+#define DIGITAL_POT_WIPER_R_AIR     232
+#define DIGITAL_POT_WIPER_R_COOLANT 233
+
 // minimum and maximum resistance in ohms that the hardware can generate
 // these values correspond to a wiper position of 0 -> max_value()-1
 // and were obtained by measurement
@@ -93,10 +98,10 @@ using namespace icecave::arduino;
 // Coolant: 4960 Ohms = 39F,    248 Ohms = 193F
 // the corresponding temp ranges must be reflected in MIN_xxx_TEMP and
 // MAX_xxx_TEMP in Menu.cpp
-#define AIRTEMP_MIN_R     248
-#define AIRTEMP_MAX_R     4960
-#define COOLANTTEMP_MIN_R 248
-#define COOLANTTEMP_MAX_R 4960
+#define AIRTEMP_MIN_R     (248  - DIGITAL_POT_WIPER_R_AIR)
+#define AIRTEMP_MAX_R     (4960 - DIGITAL_POT_WIPER_R_AIR)
+#define COOLANTTEMP_MIN_R (248  - DIGITAL_POT_WIPER_R_COOLANT)
+#define COOLANTTEMP_MAX_R (4960 - DIGITAL_POT_WIPER_R_COOLANT)
 
 // number of bits of resolution for digital pot
 #define DIGITAL_POT_RESOLUTION 256
@@ -395,6 +400,8 @@ void Engine_SetAirTempF
     if (R < AIRTEMP_MIN_R) R = AIRTEMP_MIN_R;
     if (R > AIRTEMP_MAX_R) R = AIRTEMP_MAX_R;
 
+    R -= DIGITAL_POT_WIPER_R_AIR;
+
     int Wiper = (int)(R / AirRperW);
     if (Wiper > (DIGITAL_POT_RESOLUTION - 1)) Wiper = DIGITAL_POT_RESOLUTION - 1;
     if (Wiper < 0) Wiper = 0;
@@ -416,6 +423,8 @@ void Engine_SetCoolantTempF
     int R = CoolantTempSensor_GetResistance(CoolantTempF);
     if (R < COOLANTTEMP_MIN_R) R = COOLANTTEMP_MIN_R;
     if (R > COOLANTTEMP_MAX_R) R = COOLANTTEMP_MAX_R;
+
+    R -= DIGITAL_POT_WIPER_R_COOLANT;
 
     int Wiper = (int)(R / CoolantRperW);
     if (Wiper > (DIGITAL_POT_RESOLUTION - 1)) Wiper = DIGITAL_POT_RESOLUTION - 1;
