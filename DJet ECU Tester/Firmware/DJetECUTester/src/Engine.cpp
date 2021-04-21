@@ -94,7 +94,8 @@ using namespace icecave::arduino;
 #define NUM_PULSEGENERATOR_TRIGGERS 8
 
 // time between turning the status LED on or off in milliseconds
-#define LED_FLASH_PERIOD 1000
+#define LED_FLASH_PERIOD_ENGINEOFF 1000
+#define LED_FLASH_PERIOD_ENGINEON  250
 
 // resistance of wiper
 // obtained by trial and error
@@ -116,6 +117,9 @@ using namespace icecave::arduino;
 
 // number of bits of resolution for digital pot
 #define DIGITAL_POT_RESOLUTION 256
+
+// macro to check if engine is on
+#define IS_ENGINE_ON (EngineSpeed > 0)
 
 // defines an acceleration enrichment state
 typedef struct _enrichment
@@ -697,7 +701,7 @@ void Engine_Init
   Engine_Off();
   Engine_SetAirTempF(DEFAULT_AIRTEMPF);
 
-  LEDTimestamp = GetTime() + LED_FLASH_PERIOD;
+  LEDTimestamp = GetTime() + LED_FLASH_PERIOD_ENGINEOFF;
 }
 
 // call repeatedly to implement the engine simulation
@@ -718,6 +722,13 @@ void Engine_Process
       STATUS_LED_ON;
     }
     
-    LEDTimestamp = GetTime() + LED_FLASH_PERIOD;
+    if (IS_ENGINE_ON)
+    {
+      LEDTimestamp = GetTime() + LED_FLASH_PERIOD_ENGINEON;
+    }
+    else
+    {
+      LEDTimestamp = GetTime() + LED_FLASH_PERIOD_ENGINEOFF;
+    }
   }
 }
