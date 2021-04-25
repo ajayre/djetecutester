@@ -241,6 +241,8 @@ static uint8_t IsTimeExpired
   }
 }
 
+volatile int cnt = 0;
+
 // interrupt that handles the pulse generation
 static void PulseGenerator_Handler
   (
@@ -588,7 +590,7 @@ void Engine_Cruise30MPH
   )
 {
 
-  Engine_Set(1400, 185, 170, THROTTLE_ACCELERATING, 11, false);
+  Engine_Set(1400, 185, 17, THROTTLE_ACCELERATING, 11, false);
 }
 
 // sets the engine to cruising at 70 MPH
@@ -597,7 +599,7 @@ void Engine_Cruise70MPH
   void  
   )
 {
-  Engine_Set(3000, 185, 250, THROTTLE_ACCELERATING, 11, false);
+  Engine_Set(3000, 185, 25, THROTTLE_ACCELERATING, 11, false);
 }
 
 // sets the engine to gentle acceleration
@@ -606,7 +608,7 @@ void Engine_GentleAcceleration
   void  
   )
 {
-  Engine_Set(1800, 185, 300, THROTTLE_ACCELERATING, 9, false);
+  Engine_Set(1800, 185, 30, THROTTLE_ACCELERATING, 9, false);
 }
 
 // sets the engine to moderate acceleration
@@ -615,7 +617,7 @@ void Engine_ModerateAcceleration
   void  
   )
 {
-  Engine_Set(3500, 185, 500, THROTTLE_ACCELERATING, 7, false);
+  Engine_Set(3500, 185, 50, THROTTLE_ACCELERATING, 7, false);
 }
 
 // sets the engine to hard acceleration
@@ -624,7 +626,7 @@ void Engine_HardAcceleration
   void  
   )
 {
-  Engine_Set(6000, 185, 950, THROTTLE_ACCELERATING, 2, false);
+  Engine_Set(6000, 185, 95, THROTTLE_ACCELERATING, 2, false);
 }
 
 // turns the engine off
@@ -680,7 +682,7 @@ void Engine_Init
   AIRTEMPCS_DEASSERT;
   pinMode(PIN_COOLANTTEMPCS, OUTPUT);
   COOLANTTEMPCS_DEASSERT;
-
+ 
   AirTempSensor_Init();
   CoolantTempSensor_Init();
 

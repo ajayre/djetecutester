@@ -165,7 +165,7 @@ static void ShowSettings
   Serial.print(CoolantTempF);
   Serial.print(F(", throttlepos="));
   Serial.print(ThrottlePosition);
-  Serial.print(F(", throttledir="));
+  Serial.print(F("%, throttledir="));
   switch (ThrottleDirection)
   {
     default:
