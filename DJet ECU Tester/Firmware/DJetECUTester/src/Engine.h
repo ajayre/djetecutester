@@ -10,7 +10,6 @@
 
 typedef enum _throttledirection
 {
-  THROTTLE_NONE,
   THROTTLE_ACCELERATING,
   THROTTLE_DECELERATING
 } throttledirection_t;
@@ -55,8 +54,7 @@ extern void Engine_SetCoolantTempF
 // sets the throttle position and direction
 extern void Engine_SetThrottle
   (
-  int NewThrottlePosition,                                 // new throttle position 0% -> 100%
-  throttledirection_t NewThrottleDirection                 // new throttle direction
+  int NewThrottlePosition                                  // new throttle position 0% -> 100%
   );
 
 // sets the new pressure level from the manifold
@@ -77,7 +75,6 @@ extern void Engine_Set
   int EngineSpeed,                                         // new speed in RPM
   int CoolantTempF,                                        // new coolant temperature in F
   int ThrottlePosition,                                    // new throttle position 0% -> 100%
-  throttledirection_t ThrottleDirection,                   // new throttle direction
   int Pressure,                                            // new manifold pressure
   bool Cranking                                            // new cranking state
   );
@@ -104,7 +101,7 @@ extern void Engine_Off
 // sets the engine to cranking
 extern void Engine_Cranking
   (
-  void  
+  int EngineSpeed                                          // new speed in RPM
   );
 
 // sets the engine to cold idle state

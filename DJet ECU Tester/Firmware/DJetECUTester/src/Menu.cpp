@@ -5,7 +5,7 @@
 #include "Engine.h"
 #include "Menu.h"
 
-#define VERSION 1
+#define VERSION 2
 
 #define BAUDRATE 57600
 
@@ -31,7 +31,6 @@
 #define MENU_SET_ENGINE_SPEED 13
 #define MENU_SET_THROTTLE     14
 #define MENU_SET_PULSE_ANGLE  15
-#define MENU_SET_THROTTLE2    100
 
 // limits
 // note that temp limits come from the resistance range of the
@@ -44,6 +43,8 @@
 #define MAX_ENGINE_SPEED      6500
 #define MIN_THROTTLE_POSITION 0
 #define MAX_THROTTLE_POSITION 100
+
+#define DEFAULT_CRANKING_RPM 300
 
 static char InputBuffer[MAX_INPUTBUFFER_SIZE];
 static int InputBufferIdx = 0;
@@ -133,10 +134,6 @@ static void ShowMenu
       Serial.print(MAX_PULSEANGLE);
       Serial.print(F("):"));
       break;
-
-    case MENU_SET_THROTTLE2:
-      Serial.print(F("Enter new throttle direction (U or D):"));
-      break;
   }
 }
 
@@ -169,7 +166,6 @@ static void ShowSettings
   switch (ThrottleDirection)
   {
     default:
-    case THROTTLE_NONE:         Serial.print(F("none"));  break;
     case THROTTLE_ACCELERATING: Serial.print(F("accel")); break;
     case THROTTLE_DECELERATING: Serial.print(F("decel")); break;
   }
@@ -204,7 +200,7 @@ static void Execute_Top_Level_Menu_Item
       break;
 
     case MENU_CRANKING:
-      Engine_Cranking();
+      Engine_Cranking(DEFAULT_CRANKING_RPM);
       Serial.println(F("Set to cranking"));
       ShowSettings();
       CurrentMenuLevel = MENU_TOP_LEVEL;
@@ -373,7 +369,7 @@ static void Process_User_Input
     case MENU_SET_THROTTLE:
       {
         ThrottlePos = atol(Input);
-        if (ThrottlePos < MIN_THROTTLE_POSITION || ThrottlePos > MAX_THROTTLE_POSITION)
+        if ((ThrottlePos < MIN_THROTTLE_POSITION) || (ThrottlePos > MAX_THROTTLE_POSITION))
         {
           Serial.println();
           Serial.println();
@@ -384,26 +380,13 @@ static void Process_User_Input
         }
         else
         {
-          CurrentMenuLevel = MENU_SET_THROTTLE2;
+          Engine_SetThrottle(ThrottlePos);
+          Serial.println(F("Throttle position set"));
+          ShowSettings();
+
+          CurrentMenuLevel = MENU_TOP_LEVEL;
           ShowMenu();
         }
-      }
-      break;
-
-    case MENU_SET_THROTTLE2:
-      {
-        bool Accel = false;
-        if ((Input[0] == 'U') || (Input[0] == 'u'))
-        {
-          Accel = true;
-        }
-
-        Engine_SetThrottle(ThrottlePos, Accel ? THROTTLE_ACCELERATING : THROTTLE_DECELERATING);
-        Serial.println(F("Throttle position and direction set"));
-        ShowSettings();
-
-        CurrentMenuLevel = MENU_TOP_LEVEL;
-        ShowMenu();
       }
       break;
   }

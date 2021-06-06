@@ -121,6 +121,9 @@ using namespace icecave::arduino;
 // macro to check if engine is on
 #define IS_ENGINE_ON (EngineSpeed > 0)
 
+// number of milliseconds between 1% increase in throttle
+#define THROTTLE_STEP_TIME_MS 20
+
 // defines an acceleration enrichment state
 typedef struct _enrichment
 {
@@ -207,6 +210,9 @@ static enrichment_t Enrichment[] = {
   {901, 1000, ASSERT,   DEASSERT}   // beyond 90% throttle accel 1 stays low
 };
 
+/////////////////////////////////////////////////////////////////////
+// MODULE FUNCTIONS
+
 // Gets the current time in milliseconds since last power on
 static unsigned long GetTime
   (
@@ -240,8 +246,6 @@ static uint8_t IsTimeExpired
       return 0;
   }
 }
-
-volatile int cnt = 0;
 
 // interrupt that handles the pulse generation
 static void PulseGenerator_Handler
@@ -320,20 +324,90 @@ static void UpdatePulseGeneratorTriggers
   Triggers[7].Match = (int)((Group3End - Group4Start) * 1000.0);
 }
 
+// generates idle and WOT switch states
+static void UpdateThrottleSwitches
+  (
+  int ThrottlePos                                          // throttle position 0% -> 100%
+  )
+{
+  // idle switch
+  if (ThrottlePos <= 2)
+  {
+    TPS_IDLE;
+  }
+  else
+  {
+    TPS_NOTIDLE;
+  }
+
+  // wide open throttle switch
+  if (ThrottlePos >= 90)
+  {
+    TPS_WOT;
+  }
+  else
+  {
+    TPS_NOTWOT;
+  }
+}
+
+// generates throttle enrichment pulses
+// https://www.sw-em.com/bosch_d-jetronic_injection.htm#reference_information_tps
+static void UpdateThrottleEnrichment
+  (
+  int ThrottlePos                                          // throttle position 0% -> 100%
+  )
+{
+  // adjust throttle position for calculation, avoids the need for floating point
+  int T10 = ThrottlePos * 10;
+  if (T10 < 0)    T10 = 0;
+  if (T10 > 1000) T10 = 1000;
+
+  // search for current enrichment setting
+  int NumEnrichmentPos = sizeof(Enrichment) / sizeof(enrichment_t);
+  for (int e = 0; e < NumEnrichmentPos; e++)
+  {
+    if ((T10 >= Enrichment[e].ThrottleLow) && (T10 <= Enrichment[e].ThrottleHigh))
+    {
+      if (Enrichment[e].Accel1State == ASSERT)
+      {
+        TPS_ACCEL1_ASSERT;
+      }
+      else
+      {
+        TPS_ACCEL1_DEASSERT;
+      }
+
+      if (Enrichment[e].Accel2State == ASSERT)
+      {
+        TPS_ACCEL2_ASSERT;
+      }
+      else
+      {
+        TPS_ACCEL2_DEASSERT;
+      }
+
+      break;
+    }
+  }
+}
+
+/////////////////////////////////////////////////////////////////////
+// PUBLIC FUNCTIONS
+
 // set new engine parameters
 void Engine_Set
   (
   int EngineSpeed,                                         // new speed in RPM
   int CoolantTempF,                                        // new coolant temperature in F
   int ThrottlePosition,                                    // new throttle position 0% -> 100%
-  throttledirection_t ThrottleDirection,                   // new throttle direction
   int Pressure,                                            // new manifold pressure
   bool Cranking                                            // new cranking state
   )
 {
   Engine_SetEngineSpeed(EngineSpeed);
   Engine_SetCoolantTempF(CoolantTempF);
-  Engine_SetThrottle(ThrottlePosition, ThrottleDirection);
+  Engine_SetThrottle(ThrottlePosition);
   Engine_SetManifoldPressure(Pressure);
   Engine_SetCranking(Cranking);
 }
@@ -374,6 +448,7 @@ void Engine_SetPulseAngle
   // update calculations for pulse generation
   Engine_SetEngineSpeed(EngineSpeed);
 }
+
 
 // sets the engine speed
 void Engine_SetEngineSpeed
@@ -454,69 +529,46 @@ void Engine_SetCoolantTempF
 // sets the throttle position and direction
 void Engine_SetThrottle
   (
-  int NewThrottlePosition,                                 // new throttle position 0% -> 100%
-  throttledirection_t NewThrottleDirection                 // new throttle direction
+  int NewThrottlePosition                                  // new throttle position 0% -> 100%
   )
 {
-  ThrottlePosition = NewThrottlePosition;
-  ThrottleDirection = NewThrottleDirection;
+  int Throttle;
+  unsigned long Timestamp;
 
-  // https://www.sw-em.com/bosch_d-jetronic_injection.htm#reference_information_tps
-
-  // idle switch
-  if (ThrottlePosition <= 2)
+  // if no change in throttle
+  if (NewThrottlePosition == ThrottlePosition)
   {
-    TPS_IDLE;
-  }
-  else
-  {
-    TPS_NOTIDLE;
-  }
-
-  // wide open throttle switch
-  if (ThrottlePosition >= 90)
-  {
-    TPS_WOT;
-  }
-  else
-  {
-    TPS_NOTWOT;
-  }
-
-  // enrichment pulses
-  if ((ThrottleDirection == THROTTLE_ACCELERATING) || (ThrottleDirection == THROTTLE_NONE))
-  {
-    // adjust throttle position for calculation, avoids the need for floating point
-    int T10 = ThrottlePosition * 10;
-    if (T10 < 0)    T10 = 0;
-    if (T10 > 1000) T10 = 1000;
-
-    // search for current enrichment setting
-    int NumEnrichmentPos = sizeof(Enrichment) / sizeof(enrichment_t);
-    for (int e = 0; e < NumEnrichmentPos; e++)
+    // special case - if no throttle then always go back to
+    // starting enrichment state
+    if (NewThrottlePosition == 0)
     {
-      if ((T10 >= Enrichment[e].ThrottleLow) && (T10 <= Enrichment[e].ThrottleHigh))
-      {
-        if (Enrichment[e].Accel1State == ASSERT)
-        {
-          TPS_ACCEL1_ASSERT;
-        }
-        else
-        {
-          TPS_ACCEL1_DEASSERT;
-        }
+      UpdateThrottleEnrichment(NewThrottlePosition);
+    }
 
-        if (Enrichment[e].Accel2State == ASSERT)
-        {
-          TPS_ACCEL2_ASSERT;
-        }
-        else
-        {
-          TPS_ACCEL2_DEASSERT;
-        }
+    UpdateThrottleSwitches(NewThrottlePosition);
+    return;
+  }
 
-        break;
-      }
+  // work out direction of throttle movement
+  if (NewThrottlePosition > ThrottlePosition)
+  {
+    ThrottleDirection = THROTTLE_ACCELERATING;
+  }
+  else
+  {
+    ThrottleDirection = THROTTLE_DECELERATING;
+  }
+
+  if (ThrottleDirection == THROTTLE_ACCELERATING)
+  {
+    // increase throttle 1% at a time to generate all of the enrichment pulses
+    for (Throttle = ThrottlePosition; Throttle <= NewThrottlePosition; Throttle++)
+    {
+      UpdateThrottleSwitches(Throttle);
+      UpdateThrottleEnrichment(Throttle);
+
+      Timestamp = GetTime();
+      while (!IsTimeExpired(Timestamp + THROTTLE_STEP_TIME_MS));
     }
   }
   else
@@ -524,7 +576,17 @@ void Engine_SetThrottle
     // no pulses when decelerating
     TPS_ACCEL1_DEASSERT;
     TPS_ACCEL2_DEASSERT;
+
+    UpdateThrottleSwitches(NewThrottlePosition);
+
+    // back to starting condition for enrichment
+    if (NewThrottlePosition == 0)
+    {
+      UpdateThrottleEnrichment(NewThrottlePosition);
+    }
   }
+
+  ThrottlePosition = NewThrottlePosition;
 }
 
 // sets the new pressure level from the manifold
@@ -535,13 +597,13 @@ void Engine_SetManifoldPressure
 {
   if (NewPressure != NO_PRESSURE)
   {
-    Serial.print(F("ACTION: MANUALLY SET PRESSURE TO "));
+    Serial.print(F("*** ACTION: MANUALLY SET PRESSURE TO "));
     Serial.print(NewPressure);
-    Serial.println(F(" INHG"));
+    Serial.println(F(" INHG ***"));
   }
   else if (NewPressure == 0)
   {
-    Serial.println(F("ACTION: RELEASE ALL PRESSURE"));
+    Serial.println(F("*** ACTION: RELEASE ALL PRESSURE ***"));
   }
 
    Pressure = NewPressure;
@@ -571,7 +633,7 @@ void Engine_ColdIdle
   void  
   )
 {
-  Engine_Set(1200, DEFAULT_AIRTEMPF, 0, THROTTLE_NONE, 15, false);
+  Engine_Set(1200, DEFAULT_AIRTEMPF, 0, 15, false);
 }
 
 // sets the engine to hot idle state
@@ -580,7 +642,7 @@ void Engine_HotIdle
   void  
   )
 {
-  Engine_Set(700, 185, 0, THROTTLE_NONE, 15, false);
+  Engine_Set(700, 185, 0, 15, false);
 }
 
 // sets the engine to cruising at 30 MPH
@@ -590,7 +652,7 @@ void Engine_Cruise30MPH
   )
 {
 
-  Engine_Set(1400, 185, 17, THROTTLE_ACCELERATING, 11, false);
+  Engine_Set(1400, 185, 17, 11, false);
 }
 
 // sets the engine to cruising at 70 MPH
@@ -599,7 +661,7 @@ void Engine_Cruise70MPH
   void  
   )
 {
-  Engine_Set(3000, 185, 25, THROTTLE_ACCELERATING, 11, false);
+  Engine_Set(3000, 185, 25, 11, false);
 }
 
 // sets the engine to gentle acceleration
@@ -608,7 +670,7 @@ void Engine_GentleAcceleration
   void  
   )
 {
-  Engine_Set(1800, 185, 30, THROTTLE_ACCELERATING, 9, false);
+  Engine_Set(1800, 185, 30, 9, false);
 }
 
 // sets the engine to moderate acceleration
@@ -617,7 +679,7 @@ void Engine_ModerateAcceleration
   void  
   )
 {
-  Engine_Set(3500, 185, 50, THROTTLE_ACCELERATING, 7, false);
+  Engine_Set(3500, 185, 50, 7, false);
 }
 
 // sets the engine to hard acceleration
@@ -626,7 +688,7 @@ void Engine_HardAcceleration
   void  
   )
 {
-  Engine_Set(6000, 185, 95, THROTTLE_ACCELERATING, 2, false);
+  Engine_Set(6000, 185, 95, 2, false);
 }
 
 // turns the engine off
@@ -635,16 +697,16 @@ void Engine_Off
   void  
   )
 {
-  Engine_Set(0, DEFAULT_AIRTEMPF, 0, THROTTLE_NONE, NO_PRESSURE, false);
+  Engine_Set(0, DEFAULT_AIRTEMPF, 0, NO_PRESSURE, false);
 }
 
 // sets the engine to cranking
 void Engine_Cranking
   (
-  void  
+  int EngineSpeed                                          // new speed in RPM
   )
 {
-  Engine_Set(0, DEFAULT_AIRTEMPF, 0, THROTTLE_NONE, NO_PRESSURE, true);
+  Engine_Set(EngineSpeed, DEFAULT_AIRTEMPF, 0, NO_PRESSURE, true);
 }
 
 // initializes engine simulation
@@ -699,6 +761,8 @@ void Engine_Init
   Timer1.stop();
 
   PulseAngle = DEFAULT_PULSEANGLE;
+
+  ThrottlePosition = 0;
 
   Engine_Off();
   Engine_SetAirTempF(DEFAULT_AIRTEMPF);
