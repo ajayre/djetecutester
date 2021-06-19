@@ -11,13 +11,19 @@ Note - the version of avrdude in this folder was taken from:
 
 2. Connect the tester board to your PC and find the COM port number using the Device Manager.
 
-3. Run:
+3. Open a command prompt (Windows key -> type "cmd" -> press Enter)
 
-  C:\Users\andy\Downloads\avrdude-v6.3.1.1-windows>avrdude -p atmega328p -b 115200 -c arduino -P COM13 -e -v -U flash:w:djet-ecu-tester-firmware-r49.hex
+4. cd to this folder, e.g.
+
+  cd C:\Users\me\Downloads\djetecufirmware
+
+5. Enter and run:
+
+  avrdude -p atmega328p -b 115200 -c arduino -P COM13 -e -v -U flash:w:djet-ecu-tester-firmware-r49.hex
 
 changing the COM port and hex filename as needed.
 
-4. Expected output:
+6. Expected output:
 
 avrdude: Version 6.3.1.1-windows
          Copyright (c) 2000-2005 Brian Dean, http://www.bdmicro.com/
