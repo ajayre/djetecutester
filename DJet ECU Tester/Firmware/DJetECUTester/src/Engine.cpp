@@ -90,9 +90,6 @@ using namespace icecave::arduino;
 #define ASSERT   1
 #define DEASSERT 0
 
-// number of pulse generator triggers = number of injector groups x 2
-#define NUM_PULSEGENERATOR_TRIGGERS 8
-
 // time between turning the status LED on or off in milliseconds
 #define LED_FLASH_PERIOD_ENGINEOFF 1000
 #define LED_FLASH_PERIOD_ENGINEON  250
@@ -124,6 +121,9 @@ using namespace icecave::arduino;
 // number of milliseconds between 1% increase in throttle
 #define THROTTLE_STEP_TIME_MS 20
 
+// resolution of pulse generator timer in microseconds
+#define PG_TIMER_PERIOD_US 1000
+
 // defines an acceleration enrichment state
 typedef struct _enrichment
 {
@@ -136,13 +136,6 @@ typedef struct _enrichment
 // pulse generator trigger states for state machine
 typedef enum _triggerstates { G1START, G1END, G2START, G2END, G3START, G3END, G4START, G4END } triggerstates_t;
 
-// defines a single pulse generator trigger state
-typedef struct _trigger
-{
-  triggerstates_t State;                                   // type of edge to generate
-  unsigned short Match;                                    // time since last trigger in microseconds
-} trigger_t;
-
 static int EngineSpeed;                                    // RPM
 static int AirTempF;
 static int CoolantTempF;
@@ -153,12 +146,20 @@ static bool Cranking;
 // source: https://github.com/jmalloc/arduino-mcp4xxx
 static MCP4XXX *AirTempPot;
 static MCP4XXX *CoolantTempPot;
-static trigger_t Triggers[NUM_PULSEGENERATOR_TRIGGERS];
 static int PulseAngle;
-static int CurrentTrigger;
 static unsigned long LEDTimestamp;
 static float AirRperW;
 static float CoolantRperW;
+static volatile unsigned int PGCounter;
+static unsigned int G1On;
+static unsigned int G1Off;
+static unsigned int G2On;
+static unsigned int G2Off;
+static unsigned int G3On;
+static unsigned int G3Off;
+static unsigned int G4On;
+static unsigned int G4Off;
+static unsigned int FiringPeriod;
 
 // this table represents the fingers inside the throttle
 // position sensor. As the throttle is increased the
@@ -248,29 +249,28 @@ static uint8_t IsTimeExpired
 }
 
 // interrupt that handles the pulse generation
+// called once per millisecond
 static void PulseGenerator_Handler
   (
   void  
   )
 {
-  // toggle edge for this trigger
-  switch (Triggers[CurrentTrigger].State)
+  if (PGCounter == G1On)  TRIGGERGROUP1_HIGH;
+  if (PGCounter == G1Off) TRIGGERGROUP1_LOW;
+  if (PGCounter == G2On)  TRIGGERGROUP2_HIGH;
+  if (PGCounter == G2Off) TRIGGERGROUP2_LOW;
+  if (PGCounter == G3On)  TRIGGERGROUP3_HIGH;
+  if (PGCounter == G3Off) TRIGGERGROUP3_LOW;
+  if (PGCounter == G4On)  TRIGGERGROUP4_HIGH;
+  if (PGCounter == G4Off) TRIGGERGROUP4_LOW;
+
+  if (++PGCounter >= FiringPeriod)
   {
-    case G1START: TRIGGERGROUP1_LOW;  break;
-    case G1END:   TRIGGERGROUP1_HIGH; break;
-    case G2START: TRIGGERGROUP2_LOW;  break;
-    case G2END:   TRIGGERGROUP2_HIGH; break;
-    case G3START: TRIGGERGROUP3_LOW;  break;
-    case G3END:   TRIGGERGROUP3_HIGH; break;
-    case G4START: TRIGGERGROUP4_LOW;  break;
-    case G4END:   TRIGGERGROUP4_HIGH; break;
+    PGCounter = 0;
   }
 
-  // go to next trigger
-  if (++CurrentTrigger == NUM_PULSEGENERATOR_TRIGGERS) CurrentTrigger = 0;
-
   // restart
-  Timer1.setPeriod(Triggers[CurrentTrigger].Match);
+  Timer1.setPeriod(PG_TIMER_PERIOD_US);
   Timer1.attachInterrupt(PulseGenerator_Handler);
 }
 
@@ -284,7 +284,8 @@ static void UpdatePulseGeneratorTriggers
 {
   float RotationsPerSec = EngineSpeed / 60.0F;
   float FiringCyclesPerSec = RotationsPerSec / 2;
-  float FiringPeriod = 1 / FiringCyclesPerSec * 1000.0F;
+  
+  FiringPeriod = 1 / FiringCyclesPerSec * 1000.0F;
 
   float DutyCycle = PulseAngle * 2.0F / 720.0F;
   float PulseLength = FiringPeriod * DutyCycle;
@@ -304,24 +305,14 @@ static void UpdatePulseGeneratorTriggers
   float Group4End = Group4Start + PulseLength;
   if (Group4End > FiringPeriod) Group4End -= FiringPeriod;
 
-  // set up table of triggers
-  // each trigger has a state and a relative time in microseconds
-  Triggers[0].State = G1START;
-  Triggers[0].Match = (int)((FiringPeriod - Group3End) * 1000.0);
-  Triggers[1].State = G4END;
-  Triggers[1].Match = (int)((Group4End - Group1Start) * 1000.0);
-  Triggers[2].State = G2START;
-  Triggers[2].Match = (int)((Group2Start - Group4End) * 1000.0);
-  Triggers[3].State = G1END;
-  Triggers[3].Match = (int)((Group1End - Group2Start) * 1000.0);
-  Triggers[4].State = G3START;
-  Triggers[4].Match = (int)((Group3Start - Group1End) * 1000.0);
-  Triggers[5].State = G2END;
-  Triggers[5].Match = (int)((Group2End - Group3Start) * 1000.0);
-  Triggers[6].State = G4START;
-  Triggers[6].Match = (int)((Group4Start - Group2End) * 1000.0);
-  Triggers[7].State = G3END;
-  Triggers[7].Match = (int)((Group3End - Group4Start) * 1000.0);
+  G1On = Group1Start;
+  G1Off = Group1End;
+  G2On = Group2Start;
+  G2Off = Group2End;
+  G3On = Group3Start;
+  G3Off = Group3End;
+  G4On = Group4Start;
+  G4Off = Group4End;
 }
 
 // generates idle and WOT switch states
@@ -469,11 +460,9 @@ void Engine_SetEngineSpeed
   {
     UpdatePulseGeneratorTriggers(EngineSpeed, PulseAngle);
 
-    // go to start of table
-    CurrentTrigger = 0;
-
     // restart pulse generation
-    Timer1.setPeriod(Triggers[0].Match);
+    PGCounter = 0;
+    Timer1.setPeriod(PG_TIMER_PERIOD_US);
     Timer1.start();
   }
 }
