@@ -255,14 +255,14 @@ static void PulseGenerator_Handler
   void  
   )
 {
-  if (PGCounter == G1On)  TRIGGERGROUP1_HIGH;
-  if (PGCounter == G1Off) TRIGGERGROUP1_LOW;
-  if (PGCounter == G2On)  TRIGGERGROUP2_HIGH;
-  if (PGCounter == G2Off) TRIGGERGROUP2_LOW;
-  if (PGCounter == G3On)  TRIGGERGROUP3_HIGH;
-  if (PGCounter == G3Off) TRIGGERGROUP3_LOW;
-  if (PGCounter == G4On)  TRIGGERGROUP4_HIGH;
-  if (PGCounter == G4Off) TRIGGERGROUP4_LOW;
+  if (PGCounter == G1On)  TRIGGERGROUP1_LOW;
+  if (PGCounter == G1Off) TRIGGERGROUP1_HIGH;
+  if (PGCounter == G2On)  TRIGGERGROUP2_LOW;
+  if (PGCounter == G2Off) TRIGGERGROUP2_HIGH;
+  if (PGCounter == G3On)  TRIGGERGROUP3_LOW;
+  if (PGCounter == G3Off) TRIGGERGROUP3_HIGH;
+  if (PGCounter == G4On)  TRIGGERGROUP4_LOW;
+  if (PGCounter == G4Off) TRIGGERGROUP4_HIGH;
 
   if (++PGCounter >= FiringPeriod)
   {
