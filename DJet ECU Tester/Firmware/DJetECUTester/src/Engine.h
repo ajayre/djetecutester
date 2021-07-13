@@ -6,7 +6,7 @@
 
 // pulse angle limits
 #define MIN_PULSEANGLE 39
-#define MAX_PULSEANGLE 175
+#define MAX_PULSEANGLE (360 - 39)
 
 typedef enum _throttledirection
 {
