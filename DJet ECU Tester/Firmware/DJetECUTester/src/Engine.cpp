@@ -313,21 +313,6 @@ static void UpdatePulseGeneratorTriggers
   G3Off = Group3End;
   G4On = Group4Start;
   G4Off = Group4End;
-
-  Serial.print("DEBUG: ");
-  Serial.print("fp=");
-  Serial.print(FiringPeriod);
-  Serial.print(" dc=");
-  Serial.print(DutyCycle);
-  Serial.print(" ");
-  Serial.print(G1On);  Serial.print(" ");
-  Serial.print(G1Off); Serial.print(" ");
-  Serial.print(G2On);  Serial.print(" ");
-  Serial.print(G2Off); Serial.print(" ");
-  Serial.print(G3On);  Serial.print(" ");
-  Serial.print(G3Off); Serial.print(" ");
-  Serial.print(G4On);  Serial.print(" ");
-  Serial.print(G4Off); Serial.println();
 }
 
 // generates idle and WOT switch states
