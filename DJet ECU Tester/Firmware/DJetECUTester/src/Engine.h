@@ -5,7 +5,7 @@
 #define _ENGINEH_
 
 // pulse angle limits
-#define MIN_PULSEANGLE 120
+#define MIN_PULSEANGLE 39
 #define MAX_PULSEANGLE 175
 
 typedef enum _throttledirection
