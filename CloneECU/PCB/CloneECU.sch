@@ -4,13 +4,13 @@ EELAYER END
 $Descr B 17000 11000
 encoding utf-8
 Sheet 1 6
-Title "Bosch D-Jetronic ECU 0 280 002 005"
-Date "2020-08-09"
-Rev "1.05"
-Comp "Mercedes-Benz"
+Title "R/C107 D-Jetronic ECU Clone"
+Date "2021-07-23"
+Rev "1.00"
+Comp ""
 Comment1 "M117.982 Engine"
-Comment2 "Bosch Order # 0 280 002 005"
-Comment3 "Mercedes-Benz Part # A 000 545 26 32"
+Comment2 "Clone of Bosch # 0 280 002 005"
+Comment3 "Clone of Mercedes-Benz Part # A 000 545 26 32"
 Comment4 "Input / Output & Interior Connections"
 $EndDescr
 Text Notes 17550 1200 0    50   ~ 0
@@ -277,8 +277,6 @@ Text GLabel 5900 4400 2    50   Input ~ 0
 E8-MPS
 Text GLabel 5900 4200 2    50   Input ~ 0
 E7-MPS
-Text GLabel 5900 4800 2    50   Input ~ 0
-E10-MPS
 Text GLabel 5900 5400 2    50   Input ~ 0
 E13-PG
 Text GLabel 5900 5600 2    50   Input ~ 0
@@ -327,8 +325,6 @@ Text GLabel 5900 5000 2    50   UnSpc ~ 0
 E11-GND
 Text Notes 6400 5050 0    50   ~ 0
 ECU Ground (M5 on intake manifold)
-Text GLabel 5900 5200 2    50   UnSpc ~ 0
-E12-GND
 Text Notes 6400 5250 0    50   ~ 0
 TPS & PG Ground (internal tie to E11)
 Text GLabel 5900 6000 2    50   Input ~ 0
@@ -343,8 +339,6 @@ Text Notes 6400 5450 0    50   ~ 0
 Pulse Generator Group II
 Text Notes 12650 4450 0    50   ~ 0
 Coolant Temp Bias
-Text GLabel 12100 7600 2    50   BiDi ~ 0
-Int-6
 Text GLabel 12100 7400 2    50   BiDi ~ 0
 Int-5
 Text GLabel 12100 7800 2    50   BiDi ~ 0
@@ -621,4 +615,10 @@ Wire Wire Line
 	5750 8250 10750 8250
 Wire Wire Line
 	5750 8250 5750 4800
+Text GLabel 12100 7600 2    50   BiDi ~ 0
+Int-6
+Text Label 5900 4800 0    50   ~ 0
+E10-MPS
+Text Label 5900 5200 0    50   ~ 0
+E12-GND
 $EndSCHEMATC

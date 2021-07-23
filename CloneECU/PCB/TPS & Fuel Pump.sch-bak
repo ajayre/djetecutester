@@ -4,13 +4,13 @@ EELAYER END
 $Descr B 17000 11000
 encoding utf-8
 Sheet 3 6
-Title "Bosch D-Jetronic ECU 0 280 002 005"
-Date "2020-08-09"
-Rev "1.05"
-Comp "Mercedes-Benz"
+Title "R/C107 D-Jetronic ECU Clone"
+Date "2021-07-23"
+Rev "1.00"
+Comp ""
 Comment1 "M117.982 Engine"
-Comment2 "Bosch Order # 0 280 002 005"
-Comment3 "Mercedes-Benz Part # A 000 545 26 32"
+Comment2 "Clone of Bosch # 0 280 002 005"
+Comment3 "Clone of Mercedes-Benz Part # A 000 545 26 32"
 Comment4 "Main Board 2 288 300 028"
 $EndDescr
 Text GLabel 2000 3400 0    50   BiDi ~ 0
@@ -658,30 +658,6 @@ Wire Wire Line
 	4000 7000 6000 7000
 Connection ~ 4000 7000
 Connection ~ 4000 5500
-$Comp
-L Switch:SW_SPST SW1
-U 1 1 5F51422F
-P 1300 5500
-F 0 "SW1" H 1300 5735 50  0001 C CNN
-F 1 "Start" H 1300 5643 50  0000 C CNN
-F 2 "" H 1300 5500 50  0001 C CNN
-F 3 "~" H 1300 5500 50  0001 C CNN
-F 4 "Start Bus Power (T50)" H 1300 5500 50  0001 C CNN "Notes"
-	1    1300 5500
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Switch:SW_SPST SW3
-U 1 1 5F522B61
-P 1300 7000
-F 0 "SW3" H 1300 7235 50  0001 C CNN
-F 1 "At Idle" H 1300 7143 50  0000 C CNN
-F 2 "" H 1300 7000 50  0001 C CNN
-F 3 "~" H 1300 7000 50  0001 C CNN
-F 4 "TPS Idle Switch = T17" H 1300 7000 50  0001 C CNN "Notes"
-	1    1300 7000
-	-1   0    0    -1  
-$EndComp
 Text GLabel 15000 8000 2    50   BiDi ~ 0
 Int-6
 Wire Wire Line
@@ -745,8 +721,6 @@ Wire Wire Line
 	5500 3050 5500 3000
 Wire Wire Line
 	4800 3200 4800 3000
-Text GLabel 15400 7500 2    50   UnSpc ~ 0
-E12-GND
 Wire Wire Line
 	6400 5000 6500 5000
 Wire Wire Line
@@ -790,8 +764,6 @@ Wire Wire Line
 Connection ~ 12000 7000
 Wire Wire Line
 	12000 7000 14000 7000
-Wire Wire Line
-	15000 7000 15000 7500
 Wire Bus Line
 	6900 6500 7500 6500
 Wire Wire Line
@@ -804,18 +776,10 @@ Wire Wire Line
 	12000 6600 12000 6500
 Text GLabel 12100 6500 2    50   BiDi ~ 0
 AUX1-10V
-Text GLabel 1100 7000 0    50   UnSpc ~ 0
-E12-GND
 Wire Wire Line
 	9500 7750 7650 7750
 Wire Wire Line
 	9500 7500 9500 7750
-Wire Wire Line
-	2000 7000 2000 7200
-Wire Wire Line
-	2000 7200 1500 7200
-Wire Wire Line
-	1500 7200 1500 7000
 Wire Wire Line
 	5500 5400 5500 6000
 Wire Wire Line
@@ -1077,12 +1041,6 @@ Wire Wire Line
 Wire Wire Line
 	12500 3000 12500 3500
 Wire Wire Line
-	2000 5500 2000 5700
-Wire Wire Line
-	2000 5700 1500 5700
-Wire Wire Line
-	1500 5700 1500 5500
-Wire Wire Line
 	9750 9200 9750 9500
 Text GLabel 9850 9500 2    50   Input ~ 0
 E11-GND
@@ -1110,8 +1068,6 @@ Text Notes 850  3450 0    50   ~ 0
 Speed Validated
 Text Notes 950  4550 0    50   ~ 0
 0.7V = Drive OK
-Text Notes 600  5800 0    50   ~ 0
-Start Enrichment via\nCold Start Valve
 Text Notes 1000 7550 0    50   ~ 0
 Lo = At Idle
 Text Notes 15350 8100 0    50   ~ 0
@@ -1181,17 +1137,6 @@ Wire Wire Line
 	4000 3850 4000 4000
 Wire Wire Line
 	4000 4000 4100 4000
-$Comp
-L power:+12V #PWR0104
-U 1 1 5F21E4E0
-P 1100 5500
-F 0 "#PWR0104" H 1100 5350 50  0001 C CNN
-F 1 "+12V" V 1115 5628 50  0000 L CNN
-F 2 "" H 1100 5500 50  0001 C CNN
-F 3 "" H 1100 5500 50  0001 C CNN
-	1    1100 5500
-	0    -1   -1   0   
-$EndComp
 Wire Wire Line
 	8500 3400 8500 3750
 Connection ~ 8500 3750
@@ -1440,18 +1385,6 @@ Wire Notes Line
 	8950 750  10100 750 
 Text Notes 15500 7050 0    50   ~ 0
 Diagnosis Point\nGroups II & IV
-$Comp
-L Switch:SW_SPST SW2
-U 1 1 5F596B84
-P 15200 7500
-F 0 "SW2" H 15200 7735 50  0001 C CNN
-F 1 "Full Throttle" H 15200 7350 50  0000 C CNN
-F 2 "" H 15200 7500 50  0001 C CNN
-F 3 "~" H 15200 7500 50  0001 C CNN
-F 4 "TPS Full Throttle Switch = T2" H 15200 7500 50  0001 C CNN "Notes"
-	1    15200 7500
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5500 5100 5500 5000
 Connection ~ 5500 5000

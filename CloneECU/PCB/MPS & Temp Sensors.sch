@@ -4,13 +4,13 @@ EELAYER END
 $Descr B 17000 11000
 encoding utf-8
 Sheet 4 6
-Title "Bosch D-Jetronic ECU 0 280 002 005"
-Date "2020-08-09"
-Rev "1.05"
-Comp "Mercedes-Benz"
+Title "R/C107 D-Jetronic ECU Clone"
+Date "2021-07-23"
+Rev "1.00"
+Comp ""
 Comment1 "M117.982 Engine"
-Comment2 "Bosch Order # 0 280 002 005"
-Comment3 "Mercedes-Benz Part # A 000 545 26 32"
+Comment2 "Clone of Bosch # 0 280 002 005"
+Comment3 "Clone of Mercedes-Benz Part # A 000 545 26 32"
 Comment4 "Main Board 2 288 300 028"
 $EndDescr
 Text GLabel 2500 1500 0    50   Input ~ 0
@@ -194,24 +194,8 @@ F 4 "R R R Gd = 2.2KΩ ±5%" H 12500 7500 50  0001 C CNN "Notes"
 $EndComp
 Wire Wire Line
 	12850 7500 12650 7500
-Text GLabel 2500 9500 0    50   Input ~ 0
-E10-MPS
-$Comp
-L Device:Thermistor T2
-U 1 1 5F4C06C2
-P 1400 1500
-F 0 "T2" H 1350 1900 50  0000 L CNN
-F 1 "Water Temp Sensor" H 1400 1800 50  0000 C CNN
-F 2 "" H 1400 1500 50  0001 C CNN
-F 3 "~" H 1400 1500 50  0001 C CNN
-F 4 "Bosch 0 280 130 014" H 1400 1500 50  0001 C CNN "Notes"
-	1    1400 1500
-	-1   0    0    -1  
-$EndComp
 Wire Wire Line
 	15000 7500 14150 7500
-Text GLabel 2500 10000 0    50   BiDi ~ 0
-Int-6
 Text GLabel 12000 1000 2    50   BiDi ~ 0
 AUX12-TGL
 $Comp
@@ -263,8 +247,6 @@ AUX8-T2^
 Text Notes 1550 2100 0    50   ~ 0
 Water Temp\nBias
 Wire Wire Line
-	2500 1300 2500 1500
-Wire Wire Line
 	10500 2750 10000 2750
 Wire Wire Line
 	11500 1350 11500 1250
@@ -281,8 +263,6 @@ Text Notes 1650 4550 0    50   ~ 0
 Lo = At Idle
 Text Notes 1400 5050 0    50   ~ 0
 Hi = Inject Disable\n(high RPM on idle)
-Text Notes 1300 10100 0    50   ~ 0
-Mixture Bias\nLower Voltage = \nLonger Injection Pulse
 Wire Wire Line
 	4000 8500 4000 6000
 Wire Wire Line
@@ -301,24 +281,6 @@ Text Notes 3250 700  0    50   ~ 10
 Coolant Temperature Compensation
 Text Notes 6800 700  0    50   ~ 10
 Injector Group Toggle
-Text GLabel 1200 1700 0    50   UnSpc ~ 0
-E11-GND
-Text Notes 1700 8700 0    50   ~ 0
-L2
-Text Notes 1700 8350 0    50   ~ 0
-L1
-$Comp
-L Device:Transformer_1P_1S MPS1
-U 1 1 5F474B4A
-P 1750 8500
-F 0 "MPS1" V 1650 7650 50  0000 L CNN
-F 1 "Manifold Pressure Sensor" V 1750 7300 50  0000 L CNN
-F 2 "" H 1750 8500 50  0001 C CNN
-F 3 "~" H 1750 8500 50  0001 C CNN
-F 4 "Bosch 0 280 100 100" H 1750 8500 50  0001 C CNN "Notes"
-	1    1750 8500
-	0    1    1    0   
-$EndComp
 Wire Wire Line
 	10000 2650 10000 2750
 Wire Wire Line
@@ -343,38 +305,6 @@ Wire Wire Line
 Connection ~ 11500 1750
 Text GLabel 2500 7500 0    50   Input ~ 0
 E15-MPS
-Wire Wire Line
-	2500 8100 2500 8000
-Wire Wire Line
-	1550 8100 1500 8100
-Wire Wire Line
-	1500 8100 1500 7500
-Wire Wire Line
-	1500 7500 2000 7500
-Wire Wire Line
-	2000 7500 2000 7600
-Wire Wire Line
-	2000 7600 2500 7600
-Wire Wire Line
-	1950 8100 2500 8100
-Wire Wire Line
-	1950 8900 2500 8900
-Wire Wire Line
-	2500 8900 2500 9000
-Wire Wire Line
-	1550 8900 1500 8900
-Wire Wire Line
-	1500 8900 1500 9500
-Wire Wire Line
-	1500 9500 2000 9500
-Wire Wire Line
-	2000 9500 2000 9400
-Wire Wire Line
-	2000 9400 2500 9400
-Wire Wire Line
-	2500 9400 2500 10000
-Wire Wire Line
-	2500 7500 2500 7600
 $Comp
 L Device:R_US R216
 U 1 1 5F340BEE
@@ -649,30 +579,8 @@ Wire Bus Line
 	12000 7000 13500 7000
 Wire Bus Line
 	7000 7000 7500 7000
-Wire Wire Line
-	15500 8000 15600 8000
-Text GLabel 15600 8000 2    50   UnSpc ~ 0
-E11-GND
-Wire Wire Line
-	15500 7950 15500 8000
-$Comp
-L Device:Thermistor T1
-U 1 1 5F4ACFEA
-P 15500 7750
-F 0 "T1" H 15950 7800 50  0000 L CNN
-F 1 "Air Temp Sensor" H 15700 7700 50  0000 L CNN
-F 2 "" H 15500 7750 50  0001 C CNN
-F 3 "~" H 15500 7750 50  0001 C CNN
-F 4 "Bosch 0 280 130 006" H 15500 7750 50  0001 C CNN "Notes"
-	1    15500 7750
-	1    0    0    -1  
-$EndComp
 Wire Notes Line
 	14500 6900 14500 8500
-Wire Wire Line
-	1400 1300 2500 1300
-Wire Wire Line
-	1400 1700 1200 1700
 Connection ~ 8500 2250
 Wire Wire Line
 	8500 2250 8850 2250
@@ -933,12 +841,6 @@ F 3 "~" H 3250 1500 50  0001 C CNN
 	1    3250 1500
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	15000 7500 15000 7300
-Wire Wire Line
-	15000 7300 15500 7300
-Wire Wire Line
-	15500 7300 15500 7550
 Text Notes 10100 3000 0    50   ~ 0
 58696Ω
 Connection ~ 7000 8000

@@ -4,13 +4,13 @@ EELAYER END
 $Descr B 17000 11000
 encoding utf-8
 Sheet 5 6
-Title "Bosch D-Jetronic ECU 0 280 002 005"
-Date "2020-08-09"
-Rev "1.05"
-Comp "Mercedes-Benz"
+Title "R/C107 D-Jetronic ECU Clone"
+Date "2021-07-23"
+Rev "1.00"
+Comp ""
 Comment1 "M117.982 Engine"
-Comment2 "Bosch Order # 0 280 002 005"
-Comment3 "Mercedes-Benz Part # A 000 545 26 32"
+Comment2 "Clone of Bosch # 0 280 002 005"
+Comment3 "Clone of Mercedes-Benz Part # A 000 545 26 32"
 Comment4 "Auxiliary Board 2 288 300 029"
 $EndDescr
 Text GLabel 3000 3500 0    50   BiDi ~ 0
