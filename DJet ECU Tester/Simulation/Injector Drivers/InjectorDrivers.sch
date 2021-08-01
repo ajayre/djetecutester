@@ -69,7 +69,7 @@ F 4 "O Bk Br Gd = 300Ω ±5%" H 7950 2600 50  0001 C CNN "Notes"
 	1    7950 2600
 	1    0    0    -1  
 $EndComp
-Text GLabel 8050 2100 2    50   Input ~ 0
+Text GLabel 8100 1550 2    50   Input ~ 0
 E24-12V
 $Comp
 L Transistor_BJT:BC547 Q500
@@ -133,8 +133,6 @@ Wire Wire Line
 	7950 4800 7950 5000
 Wire Wire Line
 	7950 6300 7950 6500
-Wire Wire Line
-	7950 2450 7950 2100
 Wire Wire Line
 	7950 7800 7950 8000
 Wire Wire Line
@@ -288,7 +286,7 @@ Wire Wire Line
 Connection ~ 9450 7600
 Wire Wire Line
 	9450 7600 9800 7600
-Text GLabel 12250 2100 2    50   Input ~ 0
+Text GLabel 12300 1600 2    50   Input ~ 0
 E24-12V
 Wire Wire Line
 	11200 2500 11950 2500
@@ -333,7 +331,7 @@ F 4 "Bl Gr Gd Gd = 6.8Ω ±5%" H 12450 3350 50  0001 C CNN "Notes"
 	1    12450 3350
 	1    0    0    -1  
 $EndComp
-Text GLabel 12550 3500 2    50   UnSpc ~ 0
+Text GLabel 12800 4050 2    50   UnSpc ~ 0
 E11-GND
 Wire Wire Line
 	11200 2900 12450 2900
@@ -423,11 +421,6 @@ Text GLabel 12550 5000 2    50   UnSpc ~ 0
 E11-GND
 Text GLabel 8050 5000 2    50   UnSpc ~ 0
 E11-GND
-Wire Wire Line
-	10100 3100 11950 3100
-Connection ~ 11950 3100
-Wire Wire Line
-	11950 3100 11950 4000
 $Comp
 L Device:R_US R506
 U 1 1 5F274A48
@@ -563,8 +556,6 @@ F 4 "R W Bk Gd = 27Ω ±5%" H 10450 2400 50  0001 C CNN "Notes"
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	10450 2250 10450 2100
-Wire Wire Line
 	10450 3800 10450 3700
 Wire Wire Line
 	10450 3700 10550 3700
@@ -577,13 +568,11 @@ Wire Wire Line
 Wire Wire Line
 	7950 5000 8050 5000
 Wire Wire Line
-	7950 2100 8050 2100
+	7950 1550 8100 1550
 Wire Wire Line
 	7950 5200 8050 5200
 Wire Wire Line
 	7950 8000 8050 8000
-Wire Wire Line
-	12450 3500 12550 3500
 Wire Wire Line
 	12450 6500 12550 6500
 Wire Wire Line
@@ -808,14 +797,14 @@ IN_INJ7_2
 Wire Wire Line
 	9650 5000 12450 5000
 Wire Wire Line
-	10450 2100 12150 2100
+	10450 1600 12150 1600
 Wire Wire Line
-	12150 2100 12150 2250
-Connection ~ 12150 2100
+	12150 1600 12150 2250
+Connection ~ 12150 1600
 Wire Wire Line
-	12150 2100 12250 2100
+	12150 1600 12300 1600
 Wire Bus Line
-	12150 2100 12250 2100
+	12150 1600 12300 1600
 Wire Wire Line
 	9100 7600 9100 7650
 Connection ~ 9100 7600
@@ -1415,6 +1404,83 @@ Wire Wire Line
 Wire Wire Line
 	12700 2750 11950 2750
 Connection ~ 11950 2750
+$Comp
+L Simulation_SPICE:VDC VR508BOGUS
+U 1 1 610C9752
+P 12450 3800
+F 0 "VR508BOGUS" H 12580 3891 50  0000 L CNN
+F 1 "0" H 12580 3800 50  0000 L CNN
+F 2 "" H 12450 3800 50  0001 C CNN
+F 3 "~" H 12450 3800 50  0001 C CNN
+F 4 "Y" H 12450 3800 50  0001 L CNN "Spice_Netlist_Enabled"
+F 5 "V" H 12450 3800 50  0001 L CNN "Spice_Primitive"
+F 6 "dc(0)" H 12580 3709 50  0000 L CNN "Spice_Model"
+	1    12450 3800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	12450 3500 12450 3600
+Wire Wire Line
+	12450 4000 12450 4050
+Wire Wire Line
+	12450 4050 12800 4050
+$Comp
+L Simulation_SPICE:VDC VR505BOGUS
+U 1 1 611A5D53
+P 10450 1900
+F 0 "VR505BOGUS" H 10580 1991 50  0000 L CNN
+F 1 "0" H 10580 1900 50  0000 L CNN
+F 2 "" H 10450 1900 50  0001 C CNN
+F 3 "~" H 10450 1900 50  0001 C CNN
+F 4 "Y" H 10450 1900 50  0001 L CNN "Spice_Netlist_Enabled"
+F 5 "V" H 10450 1900 50  0001 L CNN "Spice_Primitive"
+F 6 "dc(0)" H 10580 1809 50  0000 L CNN "Spice_Model"
+	1    10450 1900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10450 1700 10450 1600
+Wire Wire Line
+	10450 2100 10450 2250
 Wire Wire Line
 	11950 2750 11950 3100
+Connection ~ 11950 3100
+Wire Wire Line
+	11950 3100 11950 4000
+$Comp
+L Simulation_SPICE:VDC VR509BOGUS
+U 1 1 611C586E
+P 10750 3100
+F 0 "VR509BOGUS" V 10550 2900 50  0000 L CNN
+F 1 "0" H 10880 3100 50  0000 L CNN
+F 2 "" H 10750 3100 50  0001 C CNN
+F 3 "~" H 10750 3100 50  0001 C CNN
+F 4 "Y" H 10750 3100 50  0001 L CNN "Spice_Netlist_Enabled"
+F 5 "V" H 10750 3100 50  0001 L CNN "Spice_Primitive"
+F 6 "dc(0)" H 10880 3009 50  0000 L CNN "Spice_Model"
+	1    10750 3100
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	10950 3100 11950 3100
+Wire Wire Line
+	10550 3100 10100 3100
+$Comp
+L Simulation_SPICE:VDC VR503BOGUS
+U 1 1 611EF31B
+P 7950 2000
+F 0 "VR503BOGUS" H 8080 2091 50  0000 L CNN
+F 1 "0" H 8080 2000 50  0000 L CNN
+F 2 "" H 7950 2000 50  0001 C CNN
+F 3 "~" H 7950 2000 50  0001 C CNN
+F 4 "Y" H 7950 2000 50  0001 L CNN "Spice_Netlist_Enabled"
+F 5 "V" H 7950 2000 50  0001 L CNN "Spice_Primitive"
+F 6 "dc(0)" H 8080 1909 50  0000 L CNN "Spice_Model"
+	1    7950 2000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7950 1550 7950 1800
+Wire Wire Line
+	7950 2200 7950 2450
 $EndSCHEMATC

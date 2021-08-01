@@ -1,4 +1,4 @@
-18696293175061508
+18712535464313228
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -322,6 +322,20 @@ Chilisin_Power_Inductor_AWVS_808040
 2
 2
 Britishideas
+D-Jetronic ECU Edge Connector
+
+
+0
+50
+50
+Britishideas
+DO-214AB
+
+
+0
+2
+2
+Britishideas
 FA-238
 
 
@@ -419,6 +433,27 @@ SOD-123
 0
 2
 2
+Britishideas
+SOT-1289
+
+
+0
+0
+0
+Britishideas
+Surface Mount Cermet Trimmer SM-42-43W
+
+
+0
+3
+2
+Britishideas
+TO-220-3_Vertical_Heatsink
+TO-220-3, Vertical, RM 2.54mm, see https://www.vishay.com/docs/66542/to-220-1.pdf
+TO-220-3 Vertical RM 2.54mm
+0
+3
+3
 Britishideas
 Wurth-WE-LQS-Inductor
 
@@ -50750,12 +50785,26 @@ One digit LED 7 segment SA39-11 SC39-11 SA39-12 SC39-12
 10
 10
 EmSA
+0908_Pogo_Pin
+0908 series spring loaded pins from Mill-Max
+
+0
+1
+1
+EmSA
 ACT1210-510-2P-TL00
 CAN and CANFD Common Mode Choke
 
 0
 4
 4
+EmSA
+ARMCortexDebug
+Through hole straight pin header, 2x05, 1.27mm pitch, double rows
+Through hole pin header THT 2x05 1.27mm double row
+0
+10
+10
 EmSA
 C6S-12.000-12-3030-X
 Crystal
@@ -50770,6 +50819,13 @@ DB9 CAN connector, male
 0
 11
 9
+EmSA
+DS-ESS-COIA-M0-SOSMT
+COIA-M0 Module Female Socket
+
+0
+24
+24
 EmSA
 EmSALogo_10mm
 
@@ -50834,19 +50890,33 @@ Connector for Raspberry Pi HATs and uHATs
 42
 40
 EmSA
-HPQFN48_NXP
+HVQFN48_NXP
 LPC55xx and LPC55Sxx
 
 0
 49
-49
+48
 EmSA
-HVSON8
+HVSON8_0_5mm
 aka SOT908-1
 
 0
 9
 8
+EmSA
+HVSON8_0_65mm
+aka SOT782-1
+
+0
+9
+8
+EmSA
+MFS201N-16-Z
+MFS DPDT slide switch, through hole, right angle
+
+0
+8
+6
 EmSA
 PrototypingArea3V3
 Through hole straight socket strip, 1x02, 2.54mm pitch, single row (from Kicad 4.0.7), script generated
