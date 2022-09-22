@@ -5,7 +5,7 @@
 #include "Engine.h"
 #include "Menu.h"
 
-#define VERSION 6
+#define VERSION 7
 
 #define BAUDRATE 57600
 
